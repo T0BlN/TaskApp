@@ -1,0 +1,53 @@
+/* Home.css */
+
+/* Container for all columns */
+.home-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  /* Each column */
+  .column {
+    flex: 1;
+    padding: 1rem;
+    min-height: 200px;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+  }
+  
+  /* Change background when dragging over the column */
+  .column.is-dragging-over {
+    background: #f0f4ff;
+  }
+  
+  /* Individual task item */
+  .task-item {
+    user-select: none;
+    margin: 0 0 8px 0;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Add a shadow if the item is currently dragging */
+  .task-item.is-dragging {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Optional sub-styles for content within the task item */
+  .task-name {
+    font-weight: bold;
+  }
+  
+  .task-description {
+    font-size: 0.9em;
+  }
+  
+  .task-info {
+    margin-top: 4px;
+    font-size: 0.8em;
+    color: #666;
+  }
+  
