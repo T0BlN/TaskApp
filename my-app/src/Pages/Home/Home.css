@@ -51,3 +51,25 @@
     color: #666;
   }
   
+  .column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* A simple style for the plus button */
+  .add-task-button {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .add-task-button:hover {
+    background-color: #0056b3;
+  }
+  
