@@ -89,9 +89,7 @@ const Home: React.FC = () => {
   return (
     <div className="home-container">
       <DragDropContext onDragEnd={handleDragEnd}>
-        {/* ============================ */}
         {/* 1) TODO COLUMN             */}
-        {/* ============================ */}
         <Droppable droppableId="todo">
           {(provided, snapshot) => (
             <div
@@ -99,34 +97,32 @@ const Home: React.FC = () => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              <div className="column-header">
+                <div className="column-header">
                 <h2>To Do</h2>
                 {/* PLUS BUTTON: Clicking opens the modal */}
                 <button onClick={handleOpenModal} className="add-task-button">
-                  +
+                    +
                 </button>
-              </div>
+                </div>
 
-              {todoTasks.map((task, index) => (
+                {todoTasks.map((task, index) => (
                 <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided, snapshot) => (
+                    {(provided, snapshot) => (
                     <div
-                      className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={{ ...provided.draggableProps.style }}
+                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{ ...provided.draggableProps.style }}
                     >
-                      <div className="task-name">{task.name}</div>
-                      <div className="task-description">{task.description}</div>
-                      <div className="task-info">
-                        Priority: {task.priority}
-                      </div>
+                        <div className="task-name">{task.name}</div>
+                        <div className="task-description">{task.description}</div>
+                        <div className="task-info">Priority: {task.priority}</div>
                     </div>
-                  )}
+                    )}
                 </Draggable>
-              ))}
-              {provided.placeholder}
+                ))}
+                {provided.placeholder}
             </div>
           )}
         </Droppable>
@@ -139,28 +135,28 @@ const Home: React.FC = () => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              <h2>In Progress</h2>
-              {inProgressTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={{ ...provided.draggableProps.style }}
-                    >
-                      <div className="task-name">{task.name}</div>
-                      <div className="task-description">{task.description}</div>
-                      <div className="task-info">
-                        Priority: {task.priority}
-                      </div>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
+                <div className="column-header">
+                    <h2>In Progress</h2>
+                </div>
+                {inProgressTasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot) => (
+                        <div
+                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{ ...provided.draggableProps.style }}
+                        >
+                        <div className="task-name">{task.name}</div>
+                        <div className="task-description">{task.description}</div>
+                        <div className="task-info">Priority: {task.priority}</div>
+                        </div>
+                    )}
+                    </Draggable>
+                ))}
+                {provided.placeholder}
+                </div>
           )}
         </Droppable>
 
@@ -172,27 +168,27 @@ const Home: React.FC = () => {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              <h2>Completed</h2>
-              {completedTasks.map((task, index) => (
+                <div className="column-header">
+                    <h2>Completed</h2>
+                </div>
+                {completedTasks.map((task, index) => (
                 <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided, snapshot) => (
+                    {(provided, snapshot) => (
                     <div
-                      className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={{ ...provided.draggableProps.style }}
+                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{ ...provided.draggableProps.style }}
                     >
-                      <div className="task-name">{task.name}</div>
-                      <div className="task-description">{task.description}</div>
-                      <div className="task-info">
-                        Priority: {task.priority}
-                      </div>
+                        <div className="task-name">{task.name}</div>
+                        <div className="task-description">{task.description}</div>
+                        <div className="task-info">Priority: {task.priority}</div>
                     </div>
-                  )}
+                    )}
                 </Draggable>
-              ))}
-              {provided.placeholder}
+                ))}
+                {provided.placeholder}
             </div>
           )}
         </Droppable>
