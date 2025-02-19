@@ -18,9 +18,16 @@
     border: 1px solid #ccc;
     background: #f7f7f7;
   }
+
+  .tasks-container {
+    flex: 1;
+    padding: 1rem;
+    overflow: auto;
+    min-height: 0px;
+  }
   
-  /* Change background when dragging over the column */
-  .column.is-dragging-over {
+  /* Highlight if dragging over */
+  .tasks-container.is-dragging-over {
     background: #f0f4ff;
   }
   

@@ -4,96 +4,175 @@ import React, {
     useEffect,
     ReactNode,
     useCallback,
-  } from 'react';
-  import { v4 as uuidv4 } from 'uuid';
-  
-  export interface Task {
-    id: string;
-    name: string;
-    description: string;
-    priority: 'l' | 'm' | 'h';
-  }
+    } from 'react';
+    import { v4 as uuidv4 } from 'uuid';
 
-  interface TaskContextValue {
-    todoTasks: Task[];
-    inProgressTasks: Task[];
-    completedTasks: Task[];
-    addTodoTask: (task: Omit<Task, 'id'>) => void;
-    addInProgressTask: (task: Omit<Task, 'id'>) => void;
-    addCompletedTask: (task: Omit<Task, 'id'>) => void;
-    removeTodoTask: (id: string) => void;
-    removeInProgressTask: (id: string) => void;
-    removeCompletedTask: (id: string) => void;
-  }
-  
-  export const TaskContext = createContext<TaskContextValue | undefined>(
-    undefined
-  );
-  
-  interface TaskProviderProps {
-    children: ReactNode;
-  }
-  
-  export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
-    const [todoTasks, setTodoTasks] = useState<Task[]>(() => {
-      const saved = localStorage.getItem('todoTasks');
-      return saved ? JSON.parse(saved) : [];
-    });
-    const [inProgressTasks, setInProgressTasks] = useState<Task[]>(() => {
-      const saved = localStorage.getItem('inProgressTasks');
-      return saved ? JSON.parse(saved) : [];
-    });
-    const [completedTasks, setCompletedTasks] = useState<Task[]>(() => {
-      const saved = localStorage.getItem('completedTasks');
-      return saved ? JSON.parse(saved) : [];
-    });
-  
-    useEffect(() => {
-      localStorage.setItem('todoTasks', JSON.stringify(todoTasks));
-    }, [todoTasks]); 
-    useEffect(() => {
-      localStorage.setItem('inProgressTasks', JSON.stringify(inProgressTasks));
-    }, [inProgressTasks]);
-    useEffect(() => {
-      localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
-    }, [completedTasks]);
-  
-    const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
-      setTodoTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
-    }, []);
-    const addInProgressTask = useCallback((task: Omit<Task, 'id'>) => {
-      setInProgressTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
-    }, []); 
-    const addCompletedTask = useCallback((task: Omit<Task, 'id'>) => {
-      setCompletedTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
-    }, []);
-  
-    const removeTodoTask = useCallback((id: string) => {
-      setTodoTasks((prev) => prev.filter((task) => task.id !== id));
-    }, []);  
-    const removeInProgressTask = useCallback((id: string) => {
-      setInProgressTasks((prev) => prev.filter((task) => task.id !== id));
-    }, []); 
-    const removeCompletedTask = useCallback((id: string) => {
-      setCompletedTasks((prev) => prev.filter((task) => task.id !== id));
-    }, []);
-  
-    const contextValue: TaskContextValue = {
-      todoTasks,
-      inProgressTasks,
-      completedTasks,
-      addTodoTask,
-      addInProgressTask,
-      addCompletedTask,
-      removeTodoTask,
-      removeInProgressTask,
-      removeCompletedTask,
-    };
-  
-    return (
-      <TaskContext.Provider value={contextValue}>
-        {children}
-      </TaskContext.Provider>
+    export interface Task {
+        id: string;
+        name: string;
+        description: string;
+        priority: 'l' | 'm' | 'h';
+    }
+
+    interface TaskContextValue {
+        todoTasks: Task[];
+        inProgressTasks: Task[];
+        completedTasks: Task[];
+        // Basic add methods (used by the "plus" button or direct additions)
+        addTodoTask: (task: Omit<Task, 'id'>) => void;
+        addInProgressTask: (task: Omit<Task, 'id'>) => void;
+        addCompletedTask: (task: Omit<Task, 'id'>) => void;
+        // Removal
+        removeTodoTask: (id: string) => void;
+        removeInProgressTask: (id: string) => void;
+        removeCompletedTask: (id: string) => void;
+        // Reorder existing tasks in the same list
+        reorderTodoTasks: (startIndex: number, endIndex: number) => void;
+        reorderInProgressTasks: (startIndex: number, endIndex: number) => void;
+        reorderCompletedTasks: (startIndex: number, endIndex: number) => void;
+        // Insert tasks at a specific index (for cross-column moves)
+        insertTodoTask: (task: Partial<Task>, index: number) => void;
+        insertInProgressTask: (task: Partial<Task>, index: number) => void;
+        insertCompletedTask: (task: Partial<Task>, index: number) => void;
+    }
+
+    export const TaskContext = createContext<TaskContextValue | undefined>(
+        undefined
     );
-  };
-  
+
+    interface TaskProviderProps {
+        children: ReactNode;
+    }
+
+    export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
+        const [todoTasks, setTodoTasks] = useState<Task[]>(() => {
+            const saved = localStorage.getItem('todoTasks');
+            return saved ? JSON.parse(saved) : [];
+        });
+        const [inProgressTasks, setInProgressTasks] = useState<Task[]>(() => {
+            const saved = localStorage.getItem('inProgressTasks');
+            return saved ? JSON.parse(saved) : [];
+        });
+        const [completedTasks, setCompletedTasks] = useState<Task[]>(() => {
+            const saved = localStorage.getItem('completedTasks');
+            return saved ? JSON.parse(saved) : [];
+        });
+
+        useEffect(() => {
+            localStorage.setItem('todoTasks', JSON.stringify(todoTasks));
+        }, [todoTasks]);
+        useEffect(() => {
+            localStorage.setItem('inProgressTasks', JSON.stringify(inProgressTasks));
+        }, [inProgressTasks]);
+        useEffect(() => {
+            localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+        }, [completedTasks]);
+
+        // Basic "add" appends to end of list (used by "plus" button)
+        const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
+            setTodoTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
+        }, []);
+        const addInProgressTask = useCallback((task: Omit<Task, 'id'>) => {
+            setInProgressTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
+        }, []);
+        const addCompletedTask = useCallback((task: Omit<Task, 'id'>) => {
+            setCompletedTasks((prev) => [...prev, { ...task, id: uuidv4() }]);
+        }, []);
+
+        // Removal
+        const removeTodoTask = useCallback((id: string) => {
+            setTodoTasks((prev) => prev.filter((task) => task.id !== id));
+        }, []);
+        const removeInProgressTask = useCallback((id: string) => {
+            setInProgressTasks((prev) => prev.filter((task) => task.id !== id));
+        }, []);
+        const removeCompletedTask = useCallback((id: string) => {
+            setCompletedTasks((prev) => prev.filter((task) => task.id !== id));
+        }, []);
+
+        // Reorder tasks within the same list (used by handleDragEnd if same droppable)
+        const reorder = (list: Task[], start: number, end: number) => {
+            const result = [...list];
+            const [removed] = result.splice(start, 1);
+            result.splice(end, 0, removed);
+            return result;
+        };
+        function reorderTodoTasks(startIndex: number, endIndex: number) {
+            setTodoTasks((prev) => reorder(prev, startIndex, endIndex));
+        }
+        function reorderInProgressTasks(startIndex: number, endIndex: number) {
+            setInProgressTasks((prev) => reorder(prev, startIndex, endIndex));
+        }
+        function reorderCompletedTasks(startIndex: number, endIndex: number) {
+            setCompletedTasks((prev) => reorder(prev, startIndex, endIndex));
+        }
+
+        // Insert at a specific index (for cross-column moves),
+        // reusing the same `id` if provided or generating a new one if none exists
+        function insertTodoTask(task: Partial<Task>, index: number) {
+            setTodoTasks((prev) => {
+                const newId = task.id || uuidv4();
+                const newTask: Task = {
+                    id: newId,
+                    name: task.name ?? '',
+                    description: task.description ?? '',
+                    priority: task.priority ?? 'm',
+                };
+                const updated = [...prev];
+                updated.splice(index, 0, newTask);
+                return updated;
+            });
+        }
+        function insertInProgressTask(task: Partial<Task>, index: number) {
+            setInProgressTasks((prev) => {
+                const newId = task.id || uuidv4();
+                const newTask: Task = {
+                    id: newId,
+                    name: task.name ?? '',
+                    description: task.description ?? '',
+                    priority: task.priority ?? 'm',
+                };
+                const updated = [...prev];
+                updated.splice(index, 0, newTask);
+                return updated;
+            });
+        }
+        function insertCompletedTask(task: Partial<Task>, index: number) {
+            setCompletedTasks((prev) => {
+                const newId = task.id || uuidv4();
+                const newTask: Task = {
+                    id: newId,
+                    name: task.name ?? '',
+                    description: task.description ?? '',
+                    priority: task.priority ?? 'm',
+                };
+                const updated = [...prev];
+                updated.splice(index, 0, newTask);
+                return updated;
+            });
+        }
+
+        const contextValue: TaskContextValue = {
+            todoTasks,
+            inProgressTasks,
+            completedTasks,
+            addTodoTask,
+            addInProgressTask,
+            addCompletedTask,
+            removeTodoTask,
+            removeInProgressTask,
+            removeCompletedTask,
+            reorderTodoTasks,
+            reorderInProgressTasks,
+            reorderCompletedTasks,
+            insertTodoTask,
+            insertInProgressTask,
+            insertCompletedTask,
+        };
+
+        return (
+            <TaskContext.Provider value={contextValue}>
+                {children}
+            </TaskContext.Provider>
+        );
+    };
