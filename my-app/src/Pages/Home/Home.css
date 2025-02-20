@@ -1,75 +1,73 @@
-/* Container for all columns */
 .home-container {
     display: flex;
-    width: 100%;
-    height: 100%;
     justify-content: center;
-    margin-top: 120px;
-  }
-  
-  /* Each column */
-  .column {
-    width: 300px;
-    height: 60%;
-    padding: 1rem;
-    min-height: 200px;
-    margin-left: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    background: #f7f7f7;
-  }
+    align-items: flex-start;
+    height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    box-sizing: border-box;
+}
 
-  .tasks-container {
+.column {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+    margin: 0 10px;
+    background: #f7f7f7;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 1rem;
+}
+
+.tasks-container {
     flex: 1;
-    padding: 1rem;
-    overflow: auto;
-    min-height: 0px;
-  }
-  
-  /* Highlight if dragging over */
-  .tasks-container.is-dragging-over {
+    margin: 1rem;
+    overflow-y: auto;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+}
+
+.tasks-container.is-dragging-over {
     background: #f0f4ff;
-  }
-  
-  /* Individual task item */
-  .task-item {
+}
+
+.task-item {
     user-select: none;
     margin: 0 0 8px 0;
     padding: 8px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
-  
-  /* Add a shadow if the item is currently dragging */
-  .task-item.is-dragging {
+}
+
+.task-item.is-dragging {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Optional sub-styles for content within the task item */
-  .task-name {
+}
+
+.task-name {
     font-weight: bold;
-  }
-  
-  .task-description {
+}
+
+.task-description {
     font-size: 0.9em;
-  }
-  
-  .task-info {
+}
+
+.task-info {
     margin-top: 4px;
     font-size: 0.8em;
     color: #666;
-  }
-  
-  .column-header {
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  /* A simple style for the plus button */
-  .add-task-button {
+}
+
+.add-task-button {
     background-color: #007bff;
     color: #fff;
     font-size: 1.2rem;
@@ -78,9 +76,8 @@
     border: none;
     border-radius: 50%;
     cursor: pointer;
-  }
-  
-  .add-task-button:hover {
+}
+
+.add-task-button:hover {
     background-color: #0056b3;
-  }
-  
+}

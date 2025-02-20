@@ -126,34 +126,34 @@ return (
         <Droppable droppableId="todo">
         {(provided, snapshot) => (
             <div className="column">
-            <div className="column-header">
-                <h2>To Do</h2>
-                <button onClick={handleOpenModal} className="add-task-button">+</button>
-            </div>
-            <div 
+                <div className="column-header">
+                    <h2>To Do</h2>
+                    <button onClick={handleOpenModal} className="add-task-button">+</button>
+                </div>
+                <div 
                 className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-            >
-                {todoTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided, snapshot) => (
-                    <div
-                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style }}
-                    >
-                        <div className="task-name">{task.name}</div>
-                        <div className="task-description">{task.description}</div>
-                        <div className="task-info">Priority: {task.priority}</div>
-                    </div>
-                    )}
-                </Draggable>
-                ))}
-                {provided.placeholder}
-            </div>
+                >
+                    {todoTasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                        <div
+                            className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{ ...provided.draggableProps.style }}
+                        >
+                            <div className="task-name">{task.name}</div>
+                            <div className="task-description">{task.description}</div>
+                            <div className="task-info">Priority: {task.priority}</div>
+                        </div>
+                        )}
+                    </Draggable>
+                    ))}
+                    {provided.placeholder}
+                </div>
             </div>
         )}
         </Droppable>
