@@ -40,7 +40,16 @@
     background: #f0f4ff;
 }
 
+.task-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .task-item {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
     user-select: none;
     margin: 0 0 8px 0;
     padding: 8px;
@@ -65,6 +74,19 @@
     margin-top: 4px;
     font-size: 0.8em;
     color: #666;
+}
+
+.task-trash-button {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #888;
+    margin-right: 10px;
+  }
+  
+.task-trash-button:hover {
+    color: red;
 }
 
 .add-task-button {

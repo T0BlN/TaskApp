@@ -145,9 +145,18 @@ return (
                             {...provided.dragHandleProps}
                             style={{ ...provided.draggableProps.style }}
                         >
-                            <div className="task-name">{task.name}</div>
-                            <div className="task-description">{task.description}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
+                            <div className="task-content">
+                                <div className="task-name">{task.name}</div>
+                                <div className="task-description">{task.description}</div>
+                                <div className="task-info">Priority: {task.priority}</div>
+                            </div>
+                            {/* TRASH BUTTON for "To Do" tasks */}
+                            <button
+                            className="task-trash-button"
+                            onClick={() => removeTodoTask(task.id)}
+                            >
+                                🗑
+                            </button>
                         </div>
                         )}
                     </Draggable>
@@ -180,9 +189,18 @@ return (
                         {...provided.dragHandleProps}
                         style={{ ...provided.draggableProps.style }}
                     >
-                        <div className="task-name">{task.name}</div>
-                        <div className="task-description">{task.description}</div>
-                        <div className="task-info">Priority: {task.priority}</div>
+                        <div className="task-content">
+                            <div className="task-name">{task.name}</div>
+                            <div className="task-description">{task.description}</div>
+                            <div className="task-info">Priority: {task.priority}</div>
+                        </div>
+                        {/* TRASH BUTTON for "In Progress" tasks */}
+                        <button
+                        className="task-trash-button"
+                        onClick={() => removeInProgressTask(task.id)}
+                        >
+                            🗑
+                        </button>
                     </div>
                     )}
                 </Draggable>
@@ -215,9 +233,18 @@ return (
                         {...provided.dragHandleProps}
                         style={{ ...provided.draggableProps.style }}
                     >
-                        <div className="task-name">{task.name}</div>
-                        <div className="task-description">{task.description}</div>
-                        <div className="task-info">Priority: {task.priority}</div>
+                        <div className="task-content">
+                            <div className="task-name">{task.name}</div>
+                            <div className="task-description">{task.description}</div>
+                            <div className="task-info">Priority: {task.priority}</div>
+                        </div>
+                        {/* TRASH BUTTON for "Completed" tasks */}
+                        <button
+                        className="task-trash-button"
+                        onClick={() => removeCompletedTask(task.id)}
+                        >
+                            🗑
+                        </button>
                     </div>
                     )}
                 </Draggable>
