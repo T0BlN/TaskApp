@@ -18,21 +18,19 @@ if (!taskContext) {
 
 const {
     todoTasks,
-    inProgressTasks,
-    completedTasks,
-    addTodoTask,
-    // remove methods
-    removeTodoTask,
-    removeInProgressTask,
-    removeCompletedTask,
-    // reorder methods for same-list
-    reorderTodoTasks,
-    reorderInProgressTasks,
-    reorderCompletedTasks,
-    // insert methods for cross-column
-    insertTodoTask,
-    insertInProgressTask,
-    insertCompletedTask
+            inProgressTasks,
+            completedTasks,
+            addTodoTask,
+            trashTask,
+            removeTodoTask,
+            removeInProgressTask,
+            removeCompletedTask,
+            reorderTodoTasks,
+            reorderInProgressTasks,
+            reorderCompletedTasks,
+            insertTodoTask,
+            insertInProgressTask,
+            insertCompletedTask,
 } = taskContext;
 
 const [showModal, setShowModal] = useState(false);
@@ -153,7 +151,7 @@ return (
                             {/* TRASH BUTTON for "To Do" tasks */}
                             <button
                             className="task-trash-button"
-                            onClick={() => removeTodoTask(task.id)}
+                            onClick={() => trashTask(task)}
                             >
                                 🗑
                             </button>
@@ -197,7 +195,7 @@ return (
                         {/* TRASH BUTTON for "In Progress" tasks */}
                         <button
                         className="task-trash-button"
-                        onClick={() => removeInProgressTask(task.id)}
+                        onClick={() => trashTask(task)}
                         >
                             🗑
                         </button>
@@ -241,7 +239,7 @@ return (
                         {/* TRASH BUTTON for "Completed" tasks */}
                         <button
                         className="task-trash-button"
-                        onClick={() => removeCompletedTask(task.id)}
+                        onClick={() => trashTask(task)}
                         >
                             🗑
                         </button>

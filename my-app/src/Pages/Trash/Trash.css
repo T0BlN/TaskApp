@@ -1,0 +1,32 @@
+.trash-container {
+    width: 600px;
+    margin: 0 auto; /* center on page */
+    padding-top: 100px; /* or any spacing you like */
+    box-sizing: border-box;
+  }
+  
+  .trash-tasks {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    min-height: 300px;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: #f7f7f7;
+  }
+  
+  .trash-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .trash-actions button {
+    margin-left: 8px;
+    cursor: pointer;
+  }
+  
