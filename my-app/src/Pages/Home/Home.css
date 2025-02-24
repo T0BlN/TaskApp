@@ -103,3 +103,19 @@
 .add-task-button:hover {
     background-color: #0056b3;
 }
+
+.fixed-trash-icon {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 1.8rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #888;
+    z-index: 999;
+}
+
+.fixed-trash-icon:hover {
+    color: red;
+}

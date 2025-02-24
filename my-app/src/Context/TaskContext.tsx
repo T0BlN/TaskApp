@@ -18,10 +18,15 @@ import React, {
         todoTasks: Task[];
         inProgressTasks: Task[];
         completedTasks: Task[];
+        trashedTasks: Task[];
         // Basic add methods (used by the "plus" button or direct additions)
         addTodoTask: (task: Omit<Task, 'id'>) => void;
         addInProgressTask: (task: Omit<Task, 'id'>) => void;
         addCompletedTask: (task: Omit<Task, 'id'>) => void;
+        // trashing
+        trashTask: (task: Task) => void;
+        recoverTask: (id: string) => void;
+        deleteForever: (id: string) => void;
         // Removal
         removeTodoTask: (id: string) => void;
         removeInProgressTask: (id: string) => void;
@@ -57,6 +62,10 @@ import React, {
             const saved = localStorage.getItem('completedTasks');
             return saved ? JSON.parse(saved) : [];
         });
+        const [trashedTasks, setTrashedTasks] = useState<Task[]>(() => {
+            const saved = localStorage.getItem('trashedTasks');
+            return saved ? JSON.parse(saved) : [];
+        });
 
         useEffect(() => {
             localStorage.setItem('todoTasks', JSON.stringify(todoTasks));
@@ -67,6 +76,9 @@ import React, {
         useEffect(() => {
             localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
         }, [completedTasks]);
+        useEffect(() => {
+            localStorage.setItem('trashedTasks', JSON.stringify(trashedTasks));
+        }, [trashedTasks]);
 
         // Basic "add" appends to end of list (used by "plus" button)
         const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
@@ -88,6 +100,36 @@ import React, {
         }, []);
         const removeCompletedTask = useCallback((id: string) => {
             setCompletedTasks((prev) => prev.filter((task) => task.id !== id));
+        }, []);
+
+        const trashTask = useCallback((task: Task) => {
+            // 1) Remove from whichever list it might be in
+            setTodoTasks((prev) => prev.filter((t) => t.id !== task.id));
+            setInProgressTasks((prev) => prev.filter((t) => t.id !== task.id));
+            setCompletedTasks((prev) => prev.filter((t) => t.id !== task.id));
+        
+            // 2) Add to trashedTasks
+            setTrashedTasks((prev) => [...prev, task]);
+          }, []);
+        const recoverTask = useCallback((id: string) => {
+            let recoveredTask: Task | undefined;
+        
+            // Remove from trash first
+            setTrashedTasks((prevTrash) => {
+            const found = prevTrash.find((t) => t.id === id);
+            if (!found) return prevTrash;
+            recoveredTask = found;
+            // Remove from trash
+            return prevTrash.filter((t) => t.id !== id);
+            });
+        
+            // Then add to todoTasks
+            if (recoveredTask) {
+            setTodoTasks((prev) => [...prev, recoveredTask!]);
+            }
+        }, []);
+        const deleteForever = useCallback((id: string) => {
+            setTrashedTasks((prevTrash) => prevTrash.filter((t) => t.id !== id));
         }, []);
 
         // Reorder tasks within the same list (used by handleDragEnd if same droppable)
@@ -156,9 +198,13 @@ import React, {
             todoTasks,
             inProgressTasks,
             completedTasks,
+            trashedTasks,
             addTodoTask,
             addInProgressTask,
             addCompletedTask,
+            trashTask,
+            recoverTask,
+            deleteForever,
             removeTodoTask,
             removeInProgressTask,
             removeCompletedTask,
