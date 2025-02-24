@@ -112,18 +112,21 @@ import React, {
             setTrashedTasks((prev) => [...prev, task]);
           }, []);
         const recoverTask = useCallback((id: string) => {
+            let recoveredTask: Task | undefined;
+        
+            // Remove from trash first
             setTrashedTasks((prevTrash) => {
             const found = prevTrash.find((t) => t.id === id);
-            if (!found) return prevTrash; // no change if not found
-        
-            // remove from trash
-            const updatedTrash = prevTrash.filter((t) => t.id !== id);
-        
-            // Add it back to "todoTasks" (or use addInProgressTask if you prefer)
-            setTodoTasks((prev) => [...prev, found]);
-        
-            return updatedTrash;
+            if (!found) return prevTrash;
+            recoveredTask = found;
+            // Remove from trash
+            return prevTrash.filter((t) => t.id !== id);
             });
+        
+            // Then add to todoTasks
+            if (recoveredTask) {
+            setTodoTasks((prev) => [...prev, recoveredTask!]);
+            }
         }, []);
         const deleteForever = useCallback((id: string) => {
             setTrashedTasks((prevTrash) => prevTrash.filter((t) => t.id !== id));

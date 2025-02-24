@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { TaskContext } from '../../Context/TaskContext';
+import { useNavigate } from 'react-router-dom';
 import {
 DragDropContext,
 Droppable,
@@ -18,29 +19,35 @@ if (!taskContext) {
 
 const {
     todoTasks,
-            inProgressTasks,
-            completedTasks,
-            addTodoTask,
-            trashTask,
-            removeTodoTask,
-            removeInProgressTask,
-            removeCompletedTask,
-            reorderTodoTasks,
-            reorderInProgressTasks,
-            reorderCompletedTasks,
-            insertTodoTask,
-            insertInProgressTask,
-            insertCompletedTask,
+    inProgressTasks,
+    completedTasks,
+    addTodoTask,
+    trashTask,
+    removeTodoTask,
+    removeInProgressTask,
+    removeCompletedTask,
+    reorderTodoTasks,
+    reorderInProgressTasks,
+    reorderCompletedTasks,
+    insertTodoTask,
+    insertInProgressTask,
+    insertCompletedTask,
 } = taskContext;
 
 const [showModal, setShowModal] = useState(false);
 const handleOpenModal = () => setShowModal(true);
 const handleCloseModal = () => setShowModal(false);
+const navigate = useNavigate();
 
 // Called when user submits modal form for "To Do"
 const handleAddTodoTask = (taskData: { name: string; description: string; priority: 'l' | 'm' | 'h' }) => {
     addTodoTask(taskData);
 };
+
+//trash button navigation
+const handleGoToTrash = () => {
+    navigate('/trash');
+  };
 
 const handleDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -117,23 +124,71 @@ const handleDragEnd = (result: DropResult) => {
 };
 
 return (
-    <div className="home-container">
-    <DragDropContext onDragEnd={handleDragEnd}>
-        
-        {/* TODO COLUMN */}
-        <Droppable droppableId="todo">
-        {(provided, snapshot) => (
-            <div className="column">
-                <div className="column-header">
-                    <h2>To Do</h2>
-                    <button onClick={handleOpenModal} className="add-task-button">+</button>
+    <>
+        <button className="fixed-trash-icon" onClick={handleGoToTrash}>
+            🗑
+        </button>
+        <div className="home-container">
+        <DragDropContext onDragEnd={handleDragEnd}>
+            
+            {/* TODO COLUMN */}
+            <Droppable droppableId="todo">
+            {(provided, snapshot) => (
+                <div className="column">
+                    <div className="column-header">
+                        <h2>To Do</h2>
+                        <button onClick={handleOpenModal} className="add-task-button">+</button>
+                    </div>
+                    <div 
+                    className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    >
+                        {todoTasks.map((task, index) => (
+                        <Draggable key={task.id} draggableId={task.id} index={index}>
+                            {(provided, snapshot) => (
+                            <div
+                                className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={{ ...provided.draggableProps.style }}
+                            >
+                                <div className="task-content">
+                                    <div className="task-name">{task.name}</div>
+                                    <div className="task-description">{task.description}</div>
+                                    <div className="task-info">Priority: {task.priority}</div>
+                                </div>
+                                {/* TRASH BUTTON for "To Do" tasks */}
+                                <button
+                                className="task-trash-button"
+                                onClick={() => trashTask(task)}
+                                >
+                                    🗑
+                                </button>
+                            </div>
+                            )}
+                        </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </div>
                 </div>
-                <div 
-                className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
+            )}
+            </Droppable>
+
+            {/* IN PROGRESS COLUMN */}
+            <Droppable droppableId="inProgress">
+            {(provided, snapshot) => (
+                <div className="column">
+                <div className="column-header">
+                    <h2>In Progress</h2>
+                </div>
+                <div
+                    className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                 >
-                    {todoTasks.map((task, index) => (
+                    {inProgressTasks.map((task, index) => (
                     <Draggable key={task.id} draggableId={task.id} index={index}>
                         {(provided, snapshot) => (
                         <div
@@ -148,7 +203,7 @@ return (
                                 <div className="task-description">{task.description}</div>
                                 <div className="task-info">Priority: {task.priority}</div>
                             </div>
-                            {/* TRASH BUTTON for "To Do" tasks */}
+                            {/* TRASH BUTTON for "In Progress" tasks */}
                             <button
                             className="task-trash-button"
                             onClick={() => trashTask(task)}
@@ -161,106 +216,63 @@ return (
                     ))}
                     {provided.placeholder}
                 </div>
-            </div>
-        )}
-        </Droppable>
+                </div>
+            )}
+            </Droppable>
 
-        {/* IN PROGRESS COLUMN */}
-        <Droppable droppableId="inProgress">
-        {(provided, snapshot) => (
-            <div className="column">
-            <div className="column-header">
-                <h2>In Progress</h2>
-            </div>
-            <div
-                className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-            >
-                {inProgressTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided, snapshot) => (
-                    <div
-                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style }}
-                    >
-                        <div className="task-content">
-                            <div className="task-name">{task.name}</div>
-                            <div className="task-description">{task.description}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
-                        </div>
-                        {/* TRASH BUTTON for "In Progress" tasks */}
-                        <button
-                        className="task-trash-button"
-                        onClick={() => trashTask(task)}
+            {/* COMPLETED COLUMN */}
+            <Droppable droppableId="completed">
+            {(provided, snapshot) => (
+                <div className="column">
+                <div className="column-header">
+                    <h2>Completed</h2>
+                </div>
+                <div
+                    className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                >
+                    {completedTasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                        <div
+                            className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{ ...provided.draggableProps.style }}
                         >
-                            🗑
-                        </button>
-                    </div>
-                    )}
-                </Draggable>
-                ))}
-                {provided.placeholder}
-            </div>
-            </div>
-        )}
-        </Droppable>
-
-        {/* COMPLETED COLUMN */}
-        <Droppable droppableId="completed">
-        {(provided, snapshot) => (
-            <div className="column">
-            <div className="column-header">
-                <h2>Completed</h2>
-            </div>
-            <div
-                className={`tasks-container ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-            >
-                {completedTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided, snapshot) => (
-                    <div
-                        className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{ ...provided.draggableProps.style }}
-                    >
-                        <div className="task-content">
-                            <div className="task-name">{task.name}</div>
-                            <div className="task-description">{task.description}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
+                            <div className="task-content">
+                                <div className="task-name">{task.name}</div>
+                                <div className="task-description">{task.description}</div>
+                                <div className="task-info">Priority: {task.priority}</div>
+                            </div>
+                            {/* TRASH BUTTON for "Completed" tasks */}
+                            <button
+                            className="task-trash-button"
+                            onClick={() => trashTask(task)}
+                            >
+                                🗑
+                            </button>
                         </div>
-                        {/* TRASH BUTTON for "Completed" tasks */}
-                        <button
-                        className="task-trash-button"
-                        onClick={() => trashTask(task)}
-                        >
-                            🗑
-                        </button>
-                    </div>
-                    )}
-                </Draggable>
-                ))}
-                {provided.placeholder}
-            </div>
-            </div>
-        )}
-        </Droppable>
-    </DragDropContext>
+                        )}
+                    </Draggable>
+                    ))}
+                    {provided.placeholder}
+                </div>
+                </div>
+            )}
+            </Droppable>
+        </DragDropContext>
 
-    {/* Modal */}
-    <AddTaskModal
-        visible={showModal}
-        onClose={handleCloseModal}
-        onAdd={handleAddTodoTask}
-    />
-    </div>
+        {/* Modal */}
+        <AddTaskModal
+            visible={showModal}
+            onClose={handleCloseModal}
+            onAdd={handleAddTodoTask}
+        />
+        </div>
+    </>
 );
 };
 
