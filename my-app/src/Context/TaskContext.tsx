@@ -39,6 +39,9 @@ import React, {
         insertTodoTask: (task: Partial<Task>, index: number) => void;
         insertInProgressTask: (task: Partial<Task>, index: number) => void;
         insertCompletedTask: (task: Partial<Task>, index: number) => void;
+
+        //update
+        updateTask: (task: Task) => void;
     }
 
     export const TaskContext = createContext<TaskContextValue | undefined>(
@@ -194,6 +197,21 @@ import React, {
             });
         }
 
+        function updateTask(updated: Task) {
+            // update in To Do
+            setTodoTasks((prev) =>
+            prev.map((t) => (t.id === updated.id ? updated : t))
+            );
+            // update in In Progress
+            setInProgressTasks((prev) =>
+            prev.map((t) => (t.id === updated.id ? updated : t))
+            );
+            // update in Completed
+            setCompletedTasks((prev) =>
+            prev.map((t) => (t.id === updated.id ? updated : t))
+            );
+        }
+
         const contextValue: TaskContextValue = {
             todoTasks,
             inProgressTasks,
@@ -214,6 +232,7 @@ import React, {
             insertTodoTask,
             insertInProgressTask,
             insertCompletedTask,
+            updateTask,
         };
 
         return (
