@@ -13,22 +13,6 @@
     color: blue;
 }
 
-/* 
-   This is your main container, 
-   always 120px from the top, 100px from the bottom.
-   Then it uses the leftover space: (100vh - 120px - 100px).
-*/
-.trash-container {
-    width: 600px;
-    margin: 120px auto 100px auto;
-    height: calc(100vh - 300px);
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    background: #f7f7f7;
-    padding: 1rem;
-    overflow-y: auto;
-}
-
 .trash-title {
     position: fixed;
     top: 25px;
@@ -36,44 +20,66 @@
     transform: translateX(-50%);
     font-size: 2rem;
     font-weight: bold;
+    margin: 0;
+    z-index: 999;
 }
 
-/* Each trash item: fixed border, highlight if selected */
-.trash-item {
+.trash-container {
+    position: fixed;
+    top: 100px;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    background: #f7f7f7;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.trash-bulk-actions {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: space-between;
+    gap: 1rem;
+    justify-content: center;
+    z-index: 999;
+}
+
+.trash-bulk-actions button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+}
+
+.trash-item {
+    width: 100%;
     border: 2px solid #ddd;
     border-radius: 4px;
     background: #fff;
-    margin-bottom: 10px;
-    padding: 8px;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-bottom: 10px;
 }
+
 .trash-item.selected {
     border-color: green;
 }
 
-/* Content on the left; check on the right if selected */
 .trash-item-content {
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
+
 .check-icon {
     color: green;
     font-size: 1.4rem;
     margin-left: 8px;
     align-self: center;
-}
-
-/* Bulk action buttons at bottom */
-.trash-bulk-actions {
-    text-align: center;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-.trash-bulk-actions button {
-    cursor: pointer;
-    padding: 0.5rem 1rem;
 }
