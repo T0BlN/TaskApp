@@ -9,40 +9,77 @@
     color: #888;
     z-index: 999;
 }
-
 .fixed-home-icon:hover {
     color: blue;
 }
 
+.trash-title {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    z-index: 999;
+}
+
 .trash-container {
+    position: fixed;
+    top: 100px;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 600px;
-    margin: 0 auto; /* center on page */
-    padding-top: 100px; /* or any spacing you like */
     box-sizing: border-box;
-  }
-  
-  .trash-tasks {
     border: 1px solid #ccc;
-    padding: 1rem;
-    min-height: 300px;
-    max-height: 60vh;
-    overflow-y: auto;
     background: #f7f7f7;
-  }
-  
-  .trash-item {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.trash-bulk-actions {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    z-index: 999;
+}
+
+.trash-bulk-actions button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+}
+
+.trash-item {
+    width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    margin-bottom: 10px;
+    box-sizing: border-box;
     padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .trash-actions button {
+    margin-bottom: 10px;
+}
+
+.trash-item.selected {
+    border-color: green;
+}
+
+.trash-item-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.check-icon {
+    color: green;
+    font-size: 1.4rem;
     margin-left: 8px;
-    cursor: pointer;
-  }
-  
+    align-self: center;
+}

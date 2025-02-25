@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { TaskContext } from '../../Context/TaskContext';
 import { useNavigate } from 'react-router-dom';
 import './Trash.css';
@@ -9,44 +9,70 @@ if (!taskContext) {
     throw new Error('Trash must be used within a TaskProvider');
 }
 
+const { trashedTasks, recoverTask, deleteForever } = taskContext;
 const navigate = useNavigate();
 
-const { trashedTasks, recoverTask, deleteForever } = taskContext;
+// For multi-selection
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
 const handleGoHome = () => {
     navigate('/');
-  };
+};
+
+// Toggle selection on click
+const handleTaskClick = (id: string) => {
+    setSelectedIds((prev) =>
+    prev.includes(id)
+        ? prev.filter((taskId) => taskId !== id)
+        : [...prev, id]
+    );
+};
+
+// Bulk recover
+const handleBulkRecover = () => {
+    if (selectedIds.length === 0) return;
+    selectedIds.forEach((id) => recoverTask(id));
+    setSelectedIds([]);
+};
+
+// Bulk delete
+const handleBulkDelete = () => {
+    if (selectedIds.length === 0) return;
+    selectedIds.forEach((id) => deleteForever(id));
+    setSelectedIds([]);
+};
 
 return (
     <>
-        <button className="fixed-home-icon" onClick={handleGoHome}>
-            Home
-        </button>
-        <div className="trash-container">
-        <h2>Trashed Tasks</h2>
-        <div className="trash-tasks">
-            {trashedTasks.length === 0 ? (
-            <p>No tasks in trash.</p>
-            ) : (
-            trashedTasks.map((task) => (
-                <div key={task.id} className="trash-item">
-                <div>
-                    <strong>{task.name}</strong> <span>({task.priority})</span>
-                    <p>{task.description}</p>
+    <button className="fixed-home-icon" onClick={handleGoHome}>
+        Home
+    </button>
+    <h2 className="trash-title">Trashed Tasks</h2>
+    <div className="trash-container">
+        {trashedTasks.length === 0 ? (
+          <p>No tasks in trash.</p>
+        ) : (
+          trashedTasks.map((task) => {
+            const isSelected = selectedIds.includes(task.id);
+            return (
+              <div
+                key={task.id}
+                className={`trash-item ${isSelected ? 'selected' : ''}`}
+                onClick={() => handleTaskClick(task.id)}
+              >
+                <div className="trash-item-content">
+                  <strong>{task.name}</strong> <span>({task.priority})</span>
                 </div>
-                <div className="trash-actions">
-                    <button onClick={() => recoverTask(task.id)}>
-                    Recover
-                    </button>
-                    <button onClick={() => deleteForever(task.id)}>
-                    Delete Forever
-                    </button>
-                </div>
-                </div>
-            ))
-            )}
-        </div>
-        </div>
+                {isSelected && <div className="check-icon">✅</div>}
+              </div>
+            );
+          })
+        )}
+    </div>
+    <div className="trash-bulk-actions">
+        <button onClick={handleBulkRecover}>Recover Selected</button>
+        <button onClick={handleBulkDelete}>Delete Forever</button>
+    </div>
     </>
 );
 };

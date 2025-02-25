@@ -1,14 +1,15 @@
 import React, { useContext, useState } from 'react';
-import { TaskContext } from '../../Context/TaskContext';
+import { TaskContext, Task } from '../../Context/TaskContext';
 import { useNavigate } from 'react-router-dom';
 import {
-DragDropContext,
-Droppable,
-Draggable,
-DropResult
+    DragDropContext,
+    Droppable,
+    Draggable,
+    DropResult
 } from '@hello-pangea/dnd';
 
 import AddTaskModal from '../../Components/AddTaskModal/AddTaskModal';
+import TaskInfoModal from '../../Components/TaskInfoModal/TaskInfoModal';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -32,16 +33,38 @@ const {
     insertTodoTask,
     insertInProgressTask,
     insertCompletedTask,
+    updateTask,
 } = taskContext;
 
 const [showModal, setShowModal] = useState(false);
 const handleOpenModal = () => setShowModal(true);
 const handleCloseModal = () => setShowModal(false);
+const [infoModalVisible, setInfoModalVisible] = useState(false);
+const [selectedTask, setSelectedTask] = useState<Task | null>(null); 
 const navigate = useNavigate();
 
 // Called when user submits modal form for "To Do"
 const handleAddTodoTask = (taskData: { name: string; description: string; priority: 'l' | 'm' | 'h' }) => {
     addTodoTask(taskData);
+};
+
+// Open the info modal
+const handleShowInfo = (task: Task) => {
+    setSelectedTask(task);
+    setInfoModalVisible(true);
+};
+
+// When user saves changes in TaskInfoModal
+const handleSaveInfo = (updated: Task) => {
+    updateTask(updated);
+    setInfoModalVisible(false);
+    setSelectedTask(null);
+};
+
+//close info modal
+const handleCloseInfoModal = () => {
+    setInfoModalVisible(false);
+    setSelectedTask(null);
 };
 
 //trash button navigation
@@ -128,9 +151,9 @@ return (
         <button className="fixed-trash-icon" onClick={handleGoToTrash}>
             🗑
         </button>
+        <h1 className="page-title">My Task Board</h1>
         <div className="home-container">
         <DragDropContext onDragEnd={handleDragEnd}>
-            
             {/* TODO COLUMN */}
             <Droppable droppableId="todo">
             {(provided, snapshot) => (
@@ -156,16 +179,22 @@ return (
                             >
                                 <div className="task-content">
                                     <div className="task-name">{task.name}</div>
-                                    <div className="task-description">{task.description}</div>
                                     <div className="task-info">Priority: {task.priority}</div>
                                 </div>
-                                {/* TRASH BUTTON for "To Do" tasks */}
-                                <button
-                                className="task-trash-button"
-                                onClick={() => trashTask(task)}
-                                >
-                                    🗑
-                                </button>
+                                <div className="task-buttons">
+                                    <button
+                                        className="info-button"
+                                        onClick={() => handleShowInfo(task)}
+                                    >
+                                        i
+                                    </button>
+                                    <button
+                                        className="task-trash-button"
+                                        onClick={() => trashTask(task)}
+                                    >
+                                        🗑
+                                    </button>
+                                </div>
                             </div>
                             )}
                         </Draggable>
@@ -200,16 +229,22 @@ return (
                         >
                             <div className="task-content">
                                 <div className="task-name">{task.name}</div>
-                                <div className="task-description">{task.description}</div>
                                 <div className="task-info">Priority: {task.priority}</div>
                             </div>
-                            {/* TRASH BUTTON for "In Progress" tasks */}
-                            <button
-                            className="task-trash-button"
-                            onClick={() => trashTask(task)}
-                            >
-                                🗑
-                            </button>
+                            <div className="task-buttons">
+                                <button
+                                    className="info-button"
+                                    onClick={() => handleShowInfo(task)}
+                                >
+                                    i
+                                </button>
+                                <button
+                                    className="task-trash-button"
+                                    onClick={() => trashTask(task)}
+                                >
+                                    🗑
+                                </button>
+                            </div>
                         </div>
                         )}
                     </Draggable>
@@ -244,16 +279,22 @@ return (
                         >
                             <div className="task-content">
                                 <div className="task-name">{task.name}</div>
-                                <div className="task-description">{task.description}</div>
                                 <div className="task-info">Priority: {task.priority}</div>
                             </div>
-                            {/* TRASH BUTTON for "Completed" tasks */}
-                            <button
-                            className="task-trash-button"
-                            onClick={() => trashTask(task)}
-                            >
-                                🗑
-                            </button>
+                            <div className="task-buttons">
+                                <button
+                                    className="info-button"
+                                    onClick={() => handleShowInfo(task)}
+                                >
+                                    i
+                                </button>
+                                <button
+                                    className="task-trash-button"
+                                    onClick={() => trashTask(task)}
+                                >
+                                    🗑
+                                </button>
+                            </div>
                         </div>
                         )}
                     </Draggable>
@@ -272,6 +313,13 @@ return (
             onAdd={handleAddTodoTask}
         />
         </div>
+        {/* Info Modal */}
+        <TaskInfoModal
+            visible={infoModalVisible}
+            task={selectedTask}
+            onClose={handleCloseInfoModal}
+            onSave={handleSaveInfo}
+        />
     </>
 );
 };

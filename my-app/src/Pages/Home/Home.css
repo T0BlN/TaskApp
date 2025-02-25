@@ -1,9 +1,18 @@
+.page-title {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    font-weight: bold;
+}
+
 .home-container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     height: 100vh;
-    padding-top: 100px;
+    padding-top: 120px;
     padding-bottom: 100px;
     box-sizing: border-box;
 }
@@ -47,9 +56,9 @@
 }
 
 .task-item {
-    display: flex; 
-    justify-content: space-between;
-    align-items: center; 
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
     user-select: none;
     margin: 0 0 8px 0;
     padding: 8px;
@@ -66,8 +75,10 @@
     font-weight: bold;
 }
 
-.task-description {
-    font-size: 0.9em;
+.task-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .task-info {
@@ -76,17 +87,21 @@
     color: #666;
 }
 
+.info-button,
 .task-trash-button {
-    background: none;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    color: #888;
-    margin-right: 10px;
-  }
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #888;
+}
   
 .task-trash-button:hover {
     color: red;
+}
+
+.info-button:hover {
+    color: #007bff;
 }
 
 .add-task-button {
