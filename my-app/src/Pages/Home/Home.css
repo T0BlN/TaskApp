@@ -20,12 +20,12 @@
     align-items: flex-start;
     height: 100vh;
     padding-top: 145px;
-    padding-bottom: 100px;
+    padding-bottom: 120px;
     box-sizing: border-box;
     background: url('../../Static/Backgrounds/AppBackground2.jpg');
-    background-position: center center; /* moves the image so its midpoint is at container’s midpoint */
-    background-repeat: no-repeat;       /* no tiling */
-    background-size: auto;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .column {
@@ -45,11 +45,17 @@
 
 .column-header {
     display: flex;
+    font-family: "Rowdies", serif;
     align-items: center;
     justify-content: center;
     position: relative;
     margin: 0 1rem;
     color: white;
+    text-shadow:
+    0 0 0.5px   #fff,
+    0 0 0.5px  #fff,
+    0 0 0.5px  #fff,
+    0 0 5px  #ffe98f;
 }
 
 .todo-header .add-task-button {
@@ -61,6 +67,7 @@
 .tasks-container {
     flex: 1;
     margin: 1rem;
+    padding: 1rem;
     overflow-y: auto;
     box-sizing: border-box;
     border-radius: 10px;
@@ -72,7 +79,10 @@
 
 .task-content {
     display: flex;
+    font-family: "Rowdies", serif;
+    color: white;
     flex-direction: column;
+    margin-left: 5px;
     gap: 4px;
 }
 
@@ -81,19 +91,18 @@
     justify-content: space-between; 
     align-items: center;
     user-select: none;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    margin-right: 4px;
-    margin-left: 4px;
+    margin: 0 0 8px 0;
     padding: 8px;
-    background: #edd8ba;
-    border: 1px solid #96875d;
-    box-shadow: 0px 0px 2px rgb(255, 232, 138);
+    background: #333333;
+    border: 1px solid #ffdf95;
+    box-shadow: 0px 0px 5px #a89463;
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
     border-radius: 10px;
 }
 
 .task-item.is-dragging {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 10px #a89463;
+    z-index: 999;
 }
 
 .task-name {
@@ -109,7 +118,7 @@
 .task-info {
     margin-top: 4px;
     font-size: 0.8em;
-    color: #666;
+    color: #ffffff;
 }
 
 .info-button,
