@@ -1,10 +1,17 @@
 .page-title {
+    font-family: "Rowdies", serif;
     position: fixed;
+    color: white;
     top: 25px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 100;
+    text-shadow:
+    0 0 1px   #fff,
+    0 0 1px  #fff,
+    0 0 1px  #fff,
+    0 0 25px  #ffe98f;
 }
 
 .home-container {
@@ -12,9 +19,13 @@
     justify-content: center;
     align-items: flex-start;
     height: 100vh;
-    padding-top: 120px;
+    padding-top: 145px;
     padding-bottom: 100px;
     box-sizing: border-box;
+    background: url('../../Static/Backgrounds/AppBackground2.jpg');
+    background-position: center center; /* moves the image so its midpoint is at container’s midpoint */
+    background-repeat: no-repeat;       /* no tiling */
+    background-size: auto;
 }
 
 .column {
@@ -22,10 +33,12 @@
     flex-direction: column;
     width: 300px;
     height: 100%;
-    margin: 0 10px;
-    background: #f7f7f7;
-    border: 1px solid #ccc;
+    margin: 0 20px;
+    background: #1d1d1d;
+    border: 2px solid #ffdf95;
+    border-radius: 10px;
     box-sizing: border-box;
+    box-shadow: 0px 0px 7px rgb(255, 252, 206);
     padding-top: 15px;
     padding-bottom: 15px;
 }
@@ -33,20 +46,28 @@
 .column-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
     margin: 0 1rem;
+    color: white;
 }
+
+.todo-header .add-task-button {
+    position: absolute;
+    right: 0.5rem;
+}
+  
 
 .tasks-container {
     flex: 1;
     margin: 1rem;
     overflow-y: auto;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border-radius: 10px;
 }
 
 .tasks-container.is-dragging-over {
-    background: #f0f4ff;
+    background: #2f2f2f;
 }
 
 .task-content {
@@ -60,11 +81,15 @@
     justify-content: space-between; 
     align-items: center;
     user-select: none;
-    margin: 0 0 8px 0;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
     padding: 8px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    background: #edd8ba;
+    border: 1px solid #96875d;
+    box-shadow: 0px 0px 2px rgb(255, 232, 138);
+    border-radius: 10px;
 }
 
 .task-item.is-dragging {

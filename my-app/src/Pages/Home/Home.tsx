@@ -151,14 +151,14 @@ return (
         <button className="fixed-trash-icon" onClick={handleGoToTrash}>
             🗑
         </button>
-        <h1 className="page-title">My Task Board</h1>
+        <h1 className="page-title">Task Board</h1>
         <div className="home-container">
         <DragDropContext onDragEnd={handleDragEnd}>
             {/* TODO COLUMN */}
             <Droppable droppableId="todo">
             {(provided, snapshot) => (
                 <div className="column">
-                    <div className="column-header">
+                    <div className="column-header todo-header">
                         <h2>To Do</h2>
                         <button onClick={handleOpenModal} className="add-task-button">+</button>
                     </div>
