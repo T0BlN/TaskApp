@@ -12,11 +12,16 @@
 }
 
 .info-modal-content {
-    background: #fff;
+    font-family: "Rowdies", serif;
+    background: #1d1d1d;
+    color: #fff;
     padding: 1.5rem;
     width: 400px;
     max-width: 90%;
-    border-radius: 8px;
+    border: 2px solid #ffdf95;
+    border-radius: 10px;
+    box-shadow: 0px 0px 7px rgb(255, 252, 206);
+    box-sizing: border-box;
 }
 
 .form-group {
@@ -27,6 +32,7 @@
     display: block;
     margin-bottom: 0.3rem;
     font-weight: bold;
+    color: #fff;
 }
 
 .form-group input,
@@ -34,10 +40,43 @@
 .form-group select {
     width: 100%;
     box-sizing: border-box;
+    background: #333;
+    color: #fff;
+    border: 1px solid #ffdf95;
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-family: "Rowdies", serif;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #ffe98f;
+    box-shadow: 0 0 5px #ffe98f;
 }
 
 .button-row {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.button-row button {
+    font-family: "Rowdies", serif;
+    background: #333;
+    color: #fff;
+    border: 1px solid #ffdf95;
+    box-shadow: 0px 0px 3px rgb(255, 252, 206);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.button-row button:hover {
+    background-color: #494949;
+    box-shadow: 0px 0px 5px rgb(255, 252, 206);
+    transform: scale(1.05);
 }
