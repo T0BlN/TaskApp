@@ -1,10 +1,17 @@
 .page-title {
+    font-family: "Rowdies", serif;
     position: fixed;
+    color: white;
     top: 25px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 100;
+    text-shadow:
+    0 0 1px   #fff,
+    0 0 1px  #fff,
+    0 0 1px  #fff,
+    0 0 25px  #ffe98f;
 }
 
 .home-container {
@@ -12,9 +19,13 @@
     justify-content: center;
     align-items: flex-start;
     height: 100vh;
-    padding-top: 120px;
-    padding-bottom: 100px;
+    padding-top: 145px;
+    padding-bottom: 120px;
     box-sizing: border-box;
+    background: url('../../Static/Backgrounds/AppBackground2.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .column {
@@ -22,53 +33,102 @@
     flex-direction: column;
     width: 300px;
     height: 100%;
-    margin: 0 10px;
-    background: #f7f7f7;
-    border: 1px solid #ccc;
+    margin: 0 20px;
+    background: #1d1d1d;
+    border: 2px solid #ffdf95;
+    border-radius: 10px;
     box-sizing: border-box;
+    box-shadow: 0px 0px 7px rgb(255, 252, 206);
     padding-top: 15px;
     padding-bottom: 15px;
 }
 
 .column-header {
     display: flex;
+    font-family: "Rowdies", serif;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
     margin: 0 1rem;
+    color: white;
+    text-shadow:
+    0 0 0.5px   #fff,
+    0 0 0.5px  #fff,
+    0 0 0.5px  #fff,
+    0 0 5px  #ffe98f;
 }
+
+.todo-header .add-task-button {
+    position: absolute;
+    right: 0.5rem;
+}
+  
 
 .tasks-container {
     flex: 1;
     margin: 1rem;
+    padding: 1rem;
     overflow-y: auto;
     box-sizing: border-box;
-    border: 1px solid #ddd;
+    border-radius: 10px;
 }
 
 .tasks-container.is-dragging-over {
-    background: #f0f4ff;
+    background: #2f2f2f;
 }
 
 .task-content {
     display: flex;
+    font-family: "Rowdies", serif;
+    color: white;
     flex-direction: column;
+    margin-left: 5px;
     gap: 4px;
 }
 
 .task-item {
     display: flex;
+    position: relative;
     justify-content: space-between; 
     align-items: center;
     user-select: none;
     margin: 0 0 8px 0;
     padding: 8px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    background: #333333;
+    border: 1px solid #ffdf95;
+    box-shadow: 0px 0px 5px #a89463;
+    border-radius: 10px;
+}
+
+.priority-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 2px #d7d7d7;
+}
+
+.priority-dot.low {
+    background-color: green;
+}
+.priority-dot.medium {
+    background-color: orange;
+}
+.priority-dot.high {
+    background-color: red;
+}
+
+.task-item:hover {
+    transform: scale(1.03);
+    position: relative;
+    z-index: 2;
 }
 
 .task-item.is-dragging {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 10px #a89463;
+    z-index: 999;
 }
 
 .task-name {
@@ -78,13 +138,14 @@
 .task-buttons {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    margin-top: 4px;
+    margin-right: 25px;
 }
 
 .task-info {
     margin-top: 4px;
     font-size: 0.8em;
-    color: #666;
+    color: #ffffff;
 }
 
 .info-button,
@@ -93,44 +154,53 @@
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  color: #888;
+  color: #ffffff;
+  transition: all 0.3s ease;
 }
   
 .task-trash-button:hover {
     color: red;
+    transform: scale(1.2);
 }
 
 .info-button:hover {
     color: #007bff;
+    transform: scale(1.2);
 }
 
 .add-task-button {
-    background-color: #007bff;
+    background-color: #333333;
+    border: 1px solid #ffdf95;
+    box-shadow: 0px 0px 5px rgb(255, 252, 206);
     color: #fff;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     width: 32px;
     height: 32px;
-    border: none;
     border-radius: 50%;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .add-task-button:hover {
-    background-color: #0056b3;
+    background-color: #494949;
+    box-shadow: 0px 0px 7px rgb(255, 252, 206);
+    transform: scale(1.1);
 }
 
 .fixed-trash-icon {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: 1.8rem;
+    top: 25px;
+    right: 25px;
+    font-size: 3rem;
     border: none;
     background: none;
     cursor: pointer;
     color: #888;
     z-index: 999;
+    transition: all 0.3s ease;
 }
 
 .fixed-trash-icon:hover {
-    color: red;
+    color: rgb(255, 233, 137);
+    transform: scale(1.1);
 }
