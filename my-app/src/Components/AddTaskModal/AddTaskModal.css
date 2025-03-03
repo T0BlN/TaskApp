@@ -2,51 +2,87 @@
 
 /* Dark overlay behind modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999; /* ensure it’s on top */
-  }
-  
-  /* The actual modal content box */
-  .modal-content {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    width: 400px;
-    max-width: 95%;
-  }
-  
-  /* Form group styling */
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.4rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* ensure it’s on top, same as your info modal overlay */
+}
+
+/* The actual modal content box */
+.modal-content {
+  font-family: "Rowdies", serif;
+  background: #1d1d1d;
+  color: #fff;
+  padding: 1.5rem;
+  width: 400px;
+  max-width: 90%;
+  border: 2px solid #ffdf95;
+  border-radius: 10px;
+  box-shadow: 0px 0px 7px rgb(255, 252, 206);
+  box-sizing: border-box;
+}
+
+/* Form group styling (mirrors .form-group from your info modal) */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  background: #333;
+  color: #fff;
+  border: 1px solid #ffdf95;
+  border-radius: 5px;
+  padding: 0.5rem;
+  font-family: "Rowdies", serif;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #ffe98f;
+  box-shadow: 0 0 5px #ffe98f;
+}
+
+/* Buttons row, similar to .button-row in your info modal */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.modal-buttons button {
+  font-family: "Rowdies", serif;
+  background: #333;
+  color: #fff;
+  border: 1px solid #ffdf95;
+  box-shadow: 0px 0px 3px rgb(255, 252, 206);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.modal-buttons button:hover {
+  background-color: #494949;
+  box-shadow: 0px 0px 5px rgb(255, 252, 206);
+  transform: scale(1.05);
+}

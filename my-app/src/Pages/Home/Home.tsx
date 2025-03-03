@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { TaskContext, Task } from '../../Context/TaskContext';
 import { useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 import {
   DragDropContext,
   Droppable,
@@ -138,7 +140,7 @@ const Home: React.FC = () => {
   return (
     <>
       <button className="fixed-trash-icon" onClick={handleGoToTrash}>
-        🗑
+        <DeleteIcon fontSize="inherit" />
       </button>
       <h1 className="page-title">Task Board</h1>
 
@@ -167,16 +169,17 @@ const Home: React.FC = () => {
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
                           style={{ ...provided.draggableProps.style }}
                         >
+                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
+                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
                           </div>
                           <div className="task-buttons">
                             <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              i
+                              <InfoIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                             <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              🗑
+                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                           </div>
                         </div>
@@ -211,16 +214,17 @@ const Home: React.FC = () => {
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
                           style={{ ...provided.draggableProps.style }}
                         >
+                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
+                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
                           </div>
                           <div className="task-buttons">
                             <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              i
+                              <InfoIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                             <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              🗑
+                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                           </div>
                         </div>
@@ -255,16 +259,17 @@ const Home: React.FC = () => {
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
                           style={{ ...provided.draggableProps.style }}
                         >
+                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
+                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
-                            <div className="task-info">Priority: {task.priority}</div>
                           </div>
                           <div className="task-buttons">
                             <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              i
+                              <InfoIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                             <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              🗑
+                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
                             </button>
                           </div>
                         </div>
