@@ -9,7 +9,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <TaskProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/TaskApp">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/trash" element={<Trash />} />
