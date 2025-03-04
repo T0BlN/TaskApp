@@ -168,6 +168,7 @@ const Home: React.FC = () => {
                           {...provided.dragHandleProps}
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
                           style={{ ...provided.draggableProps.style }}
+                          onDoubleClick={() => handleShowInfo(task)}
                         >
                           <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
                           task.priority === 'm' ? 'medium' : 'high'}`}></div>
@@ -212,6 +213,7 @@ const Home: React.FC = () => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                          onDoubleClick={() => handleShowInfo(task)}
                           style={{ ...provided.draggableProps.style }}
                         >
                           <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
@@ -258,6 +260,7 @@ const Home: React.FC = () => {
                           {...provided.dragHandleProps}
                           className={`task-item ${snapshot.isDragging ? 'is-dragging' : ''}`}
                           style={{ ...provided.draggableProps.style }}
+                          onDoubleClick={() => handleShowInfo(task)}
                         >
                           <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
                           task.priority === 'm' ? 'medium' : 'high'}`}></div>

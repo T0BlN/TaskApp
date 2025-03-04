@@ -57,19 +57,23 @@ const AddTaskModal: FC<AddTaskModalProps> = ({ visible, onClose, onAdd }) => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-
+          
           <div className="form-group">
             <label>Priority:</label>
-            <select
-              value={priority}
-              onChange={(e) =>
-                setPriority(e.target.value as 'l' | 'm' | 'h')
-              }
-            >
-              <option value="l">Low</option>
-              <option value="m">Medium</option>
-              <option value="h">High</option>
-            </select>
+            <div className="priority-circles">
+              <div
+                onClick={() => setPriority('l')}
+                className={`circle low ${priority === 'l' ? 'selected' : ''}`}
+              ></div>
+              <div
+                onClick={() => setPriority('m')}
+                className={`circle medium ${priority === 'm' ? 'selected' : ''}`}
+              ></div>
+              <div
+                onClick={() => setPriority('h')}
+                className={`circle high ${priority === 'h' ? 'selected' : ''}`}
+              ></div>
+            </div>
           </div>
 
           <div className="modal-buttons">
