@@ -1,0 +1,42 @@
+.mdrContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #eee;
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.mainContent {
+    display: flex;
+    gap: 2rem;
+}
+
+.error {
+    margin-top: 1rem;
+    color: red;
+    font-weight: bold;
+}
+
+.congratsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #000;
+    color: #fff;
+}
+
+.restartButton {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}

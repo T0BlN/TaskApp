@@ -1,0 +1,42 @@
+.gridContainer {
+    width: 400px;
+    height: 300px;
+    overflow: auto;
+    background-color: #f0f0f0;
+    border: 2px solid #222;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.numberCell {
+    width: 80px;
+    margin: 5px;
+    text-align: center;
+    padding: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+/* Slight enlargement when selected */
+.selected {
+    transform: scale(1.2);
+    background-color: #d4d4ff;
+    border: 1px solid #444;
+}
+
+/* Wiggle animation to mimic the show’s “scary” effect */
+@keyframes wiggle {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+.scaryAnimation {
+    animation: wiggle 1s infinite ease-in-out;
+    color: #c00; /* or some ominous color */
+    font-weight: bold;
+}
