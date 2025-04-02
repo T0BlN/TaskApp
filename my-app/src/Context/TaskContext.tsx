@@ -14,6 +14,11 @@ export interface Task {
     priority: 'l' | 'm' | 'h';
 }
 
+export interface MdrProgress {
+    boxFillPercentages: number[];
+    isComplete: boolean;
+}
+
 interface TaskContextValue {
     todoTasks: Task[];
     inProgressTasks: Task[];
@@ -42,6 +47,11 @@ interface TaskContextValue {
 
     //update
     updateTask: (task: Task) => void;
+
+    //MDR stuff
+    mdrProgress: MdrProgress;
+    setMdrProgress: React.Dispatch<React.SetStateAction<MdrProgress>>;
+    resetMdrProgress: () => void;
 }
 
 export const TaskContext = createContext<TaskContextValue | undefined>(
@@ -69,6 +79,14 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         const saved = localStorage.getItem('trashedTasks');
         return saved ? JSON.parse(saved) : [];
     });
+    const [mdrProgress, setMdrProgress] = useState<MdrProgress>(() => {
+        const saved = localStorage.getItem('mdrProgress');
+        if (saved) return JSON.parse(saved);
+        return {
+        boxFillPercentages: [0, 0, 0, 0],
+        isComplete: false,
+        };
+    });
 
     useEffect(() => {
         localStorage.setItem('todoTasks', JSON.stringify(todoTasks));
@@ -82,6 +100,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('trashedTasks', JSON.stringify(trashedTasks));
     }, [trashedTasks]);
+    useEffect(() => {
+        localStorage.setItem('mdrProgress', JSON.stringify(mdrProgress));
+    }, [mdrProgress]);
 
     // Basic "add" appends to end of list (used by "plus" button)
     const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
@@ -218,6 +239,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         );
     }
 
+    const resetMdrProgress = useCallback(() => {
+        setMdrProgress({
+        boxFillPercentages: [0, 0, 0, 0],
+        isComplete: false,
+        });
+    }, []);
+
     const contextValue: TaskContextValue = {
         todoTasks,
         inProgressTasks,
@@ -239,6 +267,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         insertInProgressTask,
         insertCompletedTask,
         updateTask,
+        mdrProgress,
+        setMdrProgress,
+        resetMdrProgress,
     };
 
     return (
