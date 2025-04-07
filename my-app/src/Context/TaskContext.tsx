@@ -14,8 +14,9 @@ export interface Task {
     priority: 'l' | 'm' | 'h';
 }
 
-export interface MdrProgress {
+export interface MdrData {
     boxFillPercentages: number[];
+    currentBoxIndex: number;
     isComplete: boolean;
 }
 
@@ -49,9 +50,9 @@ interface TaskContextValue {
     updateTask: (task: Task) => void;
 
     //MDR stuff
-    mdrProgress: MdrProgress;
-    setMdrProgress: React.Dispatch<React.SetStateAction<MdrProgress>>;
-    resetMdrProgress: () => void;
+    mdrData: MdrData;
+    setMdrData: React.Dispatch<React.SetStateAction<MdrData>>;
+    resetMdrData: () => void;
 }
 
 export const TaskContext = createContext<TaskContextValue | undefined>(
@@ -79,11 +80,14 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         const saved = localStorage.getItem('trashedTasks');
         return saved ? JSON.parse(saved) : [];
     });
-    const [mdrProgress, setMdrProgress] = useState<MdrProgress>(() => {
-        const saved = localStorage.getItem('mdrProgress');
-        if (saved) return JSON.parse(saved);
+    const [mdrData, setMdrData] = useState<MdrData>(() => {
+        const saved = localStorage.getItem('mdrData');
+        if (saved) {
+        return JSON.parse(saved);
+        }
         return {
-        boxFillPercentages: [0, 0, 0, 0],
+        boxFillPercentages: [0, 0, 0, 0, 0],
+        currentBoxIndex: 0,
         isComplete: false,
         };
     });
@@ -101,8 +105,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         localStorage.setItem('trashedTasks', JSON.stringify(trashedTasks));
     }, [trashedTasks]);
     useEffect(() => {
-        localStorage.setItem('mdrProgress', JSON.stringify(mdrProgress));
-    }, [mdrProgress]);
+        localStorage.setItem('mdrData', JSON.stringify(mdrData));
+    }, [mdrData]);
 
     // Basic "add" appends to end of list (used by "plus" button)
     const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
@@ -239,9 +243,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         );
     }
 
-    const resetMdrProgress = useCallback(() => {
-        setMdrProgress({
-        boxFillPercentages: [0, 0, 0, 0],
+    const resetMdrData = useCallback(() => {
+        setMdrData({
+        boxFillPercentages: [0, 0, 0, 0, 0],
+        currentBoxIndex: 0,
         isComplete: false,
         });
     }, []);
@@ -267,9 +272,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         insertInProgressTask,
         insertCompletedTask,
         updateTask,
-        mdrProgress,
-        setMdrProgress,
-        resetMdrProgress,
+        mdrData,
+        setMdrData,
+        resetMdrData,
     };
 
     return (

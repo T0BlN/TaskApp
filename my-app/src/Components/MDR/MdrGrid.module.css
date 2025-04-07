@@ -1,0 +1,90 @@
+:root {
+    --cellSize: 48px;
+}
+
+/* Outer container: no scrollbars, black BG, lumon teal lines, etc. */
+.container {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background-color: #000;
+    border-top: 2px solid #00ffff;
+    border-bottom: 2px solid #00ffff;
+
+    /* Hide scrollbar */
+    overflow: hidden;
+    cursor: grab;
+}
+
+/* While dragging, show closed fist */
+.container:active {
+    cursor: grabbing;
+}
+
+/* The "canvas" that holds the absolutely-positioned number cells */
+.grid {
+    position: relative;
+}
+
+/* Each number cell absolutely placed, same size, random wiggle animation */
+.cell {
+    position: absolute;
+    width: var(--cellSize);
+    height: var(--cellSize);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #00ffff;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    user-select: none;
+
+    /* Random wiggle keyframes each cell uses 
+    but with different durations/delays */
+    animation-name: wiggle;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+/* Wiggle the numbers with small up-down or left-right shifts */
+@keyframes wiggle {
+    0% {
+    transform: translate(0, 0) scale(1);
+    }
+    25% {
+    transform: translate(-1px, 1px) scale(1);
+    }
+    50% {
+    transform: translate(1px, -1px) scale(1);
+    }
+    75% {
+    transform: translate(-1px, 0px) scale(1);
+    }
+    100% {
+    transform: translate(0, 0) scale(1);
+    }
+}
+
+/* "Fly down" animation for scary numbers once the group is complete */
+.flyDown {
+    animation-name: flyAnim, wiggle; /* keep wiggle plus a downward motion */
+    animation-duration: 1.5s, var(--flyWiggleDuration, 2s);
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1, infinite;
+    animation-timing-function: ease-in-out, ease-in-out;
+}
+
+@keyframes flyAnim {
+    0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.2);
+    }
+    90% {
+    opacity: 0.5;
+    transform: translate(0, 300px) scale(0.3);
+    }
+    100% {
+    opacity: 0;
+    transform: translate(0, 350px) scale(0);
+    }
+}

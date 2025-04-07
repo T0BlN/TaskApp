@@ -1,42 +1,48 @@
-.mdrContainer {
+.mdrPage {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background-color: #eee;
-    min-height: 100vh;
-    padding: 2rem;
-    font-family: 'Courier New', Courier, monospace;
+    height: 100vh;
+    background-color: #000;
+    color: #00ffff;
 }
 
-.title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.mainContent {
+/* A top bar containing handle and Lumon logo */
+.topBar {
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid #00ffff;
 }
 
-.error {
-    margin-top: 1rem;
-    color: red;
+.handle {
+    font-family: 'Courier New', monospace;
+}
+
+.lumonLogo {
+    font-family: 'Courier New', monospace;
     font-weight: bold;
+    font-size: 1.2rem;
 }
 
+/* The end screen container */
 .congratsContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    height: 100vh;
+    font-family: 'Courier New', monospace;
     background-color: #000;
     color: #fff;
 }
 
-.restartButton {
+.congratsContainer button {
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    font-size: 1rem;
     cursor: pointer;
+    background-color: #00cccc;
+    border: none;
+    color: #000;
+    font-weight: bold;
 }

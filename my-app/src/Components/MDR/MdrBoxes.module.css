@@ -1,0 +1,10 @@
+/* MdrBoxes.module.css */
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    background-color: #000;
+    border-top: 2px solid #00ffff;
+    box-sizing: border-box;
+}

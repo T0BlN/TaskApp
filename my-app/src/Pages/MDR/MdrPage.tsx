@@ -1,91 +1,114 @@
-// MdrPage.tsx
+// pages/MdrPage.tsx
 import React, { useContext, useEffect, useState } from 'react';
 import { TaskContext } from '../../Context/TaskContext';
-import NumberGrid from '../../Components/MDR/NumberGrid';
-import BoxesContainer from '../../Components/MDR/BoxesContainer';
-import styles from './MdrPage.module.css'; // Optional CSS module for styling
+import MdrGrid from '../../Components/MDR/MdrGrid';
+import MdrBoxes from '../../Components/MDR/MdrBoxes';
+import styles from './MdrPage.module.css'
 
 const MdrPage: React.FC = () => {
-const { mdrProgress, setMdrProgress, resetMdrProgress } = useContext(TaskContext)!;
+const { mdrData, setMdrData, resetMdrData } = useContext(TaskContext)!;
+const { boxFillPercentages, currentBoxIndex, isComplete } = mdrData;
 
-// This local state can manage the random numbers displayed, 
-// including which ones are “scary” or the user’s current selection
+// We'll generate a grid of (rowCount * colCount) random numbers
+const rowCount = 10;
+const colCount = 20;
+const totalCount = rowCount * colCount;
+
+// Store the random numbers in a single array
 const [numbers, setNumbers] = useState<number[]>([]);
+// Track which indices are “scary”
 const [scaryIndices, setScaryIndices] = useState<number[]>([]);
-const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-const [errorMessage, setErrorMessage] = useState<string>('');
+// Track which indices have been “clicked” (selected)
+const [clickedIndices, setClickedIndices] = useState<Set<number>>(new Set());
 
-// Generate initial random numbers
-useEffect(() => {
-    generateNewNumbers();
-}, []);
+// For the “fly into box” animation
+const [flyAnimationTriggered, setFlyAnimationTriggered] = useState<boolean>(false);
 
-// Function to generate new random numbers
-const generateNewNumbers = () => {
+// Generate new random numbers + new “scary group”
+const generateNumbers = () => {
     const newNums: number[] = [];
-    for (let i = 0; i < 100; i++) {
-    newNums.push(Math.floor(Math.random() * 9999)); // random 0-9999
+    for (let i = 0; i < totalCount; i++) {
+    newNums.push(Math.floor(Math.random() * 9999)); 
     }
     setNumbers(newNums);
 
-    // Randomly pick a group to be "scary"
-    const randomStart = Math.floor(Math.random() * 80);
-    const groupSize = 5 + Math.floor(Math.random() * 5); // random group size 5-10
-    const newScaryIndices = Array.from({ length: groupSize }, (_, i) => randomStart + i);
+    // pick a random contiguous set of ~5-10 numbers for “scary group”
+    const groupStart = Math.floor(Math.random() * (totalCount - 10));
+    const groupSize = 5 + Math.floor(Math.random() * 5);
+    const newScaryIndices: number[] = [];
+    for (let i = 0; i < groupSize; i++) {
+    newScaryIndices.push(groupStart + i);
+    }
     setScaryIndices(newScaryIndices);
-    setSelectedIndices([]);
-    setErrorMessage('');
+    setClickedIndices(new Set());
+    setFlyAnimationTriggered(false);
 };
 
-// Handle selecting a number
+// On mount, generate the initial set
+useEffect(() => {
+    generateNumbers();
+}, []);
+
+// When the user clicks a number
 const handleNumberClick = (index: number) => {
-    // If the index is already selected, unselect it; otherwise select it.
-    if (selectedIndices.includes(index)) {
-    setSelectedIndices((prev) => prev.filter((i) => i !== index));
-    } else {
-    setSelectedIndices((prev) => [...prev, index]);
-    }
-};
-
-// Attempt to place selected numbers in a box
-const handlePlaceNumbers = (boxIndex: number) => {
-    // check if selected indices == scary indices (i.e. user found the correct group)
-    // For simplicity, we’ll say they must match exactly in size and content
-    if (selectedIndices.length === scaryIndices.length &&
-        selectedIndices.every((val) => scaryIndices.includes(val))) {
-    // Correct group
-    const increment = Math.floor(Math.random() * 21) + 10; // 10-30
-    setMdrProgress((prev) => {
-        const newPercentages = [...prev.boxFillPercentages];
-        if (newPercentages[boxIndex] < 100) {
-        newPercentages[boxIndex] = Math.min(newPercentages[boxIndex] + increment, 100);
-        }
-        const isComplete = newPercentages.every((val) => val >= 100);
-
-        return {
-        boxFillPercentages: newPercentages,
-        isComplete,
-        };
+    // Add index to clickedIndices
+    setClickedIndices((prev) => {
+    const newSet = new Set(prev);
+    newSet.add(index);
+    return newSet;
     });
-
-    // Reset the board
-    generateNewNumbers();
-    } else {
-    // Incorrect
-    setErrorMessage('Incorrect!');
-    }
 };
 
-// If all boxes are full, show the "Congratulations" screen
-if (mdrProgress.isComplete) {
+// Whenever “clickedIndices” changes, check if user has found all scary numbers
+useEffect(() => {
+    if (scaryIndices.length > 0 && scaryIndices.every((i) => clickedIndices.has(i))) {
+    // Trigger “fly into box” animation
+    setFlyAnimationTriggered(true);
+    // Wait for the animation to finish, then update the box fill
+    const timer = setTimeout(() => {
+        depositInBox();
+    }, 1500); // match your fly animation duration
+    return () => clearTimeout(timer);
+    }
+}, [clickedIndices, scaryIndices]);
+
+// Increase the fill percentage of the current box and see if we are done
+const depositInBox = () => {
+    const increment = Math.floor(Math.random() * 21) + 10; // 10–30%
+    setMdrData((prev) => {
+    const newBoxFillPercentages = [...prev.boxFillPercentages];
+    if (newBoxFillPercentages[prev.currentBoxIndex] < 100) {
+        newBoxFillPercentages[prev.currentBoxIndex] =
+        Math.min(newBoxFillPercentages[prev.currentBoxIndex] + increment, 100);
+    }
+    // Move on to next box
+    let newCurrentBoxIndex = prev.currentBoxIndex;
+    if (newBoxFillPercentages[prev.currentBoxIndex] >= 100) {
+        newCurrentBoxIndex += 1;
+    }
+    const newIsComplete = newCurrentBoxIndex >= newBoxFillPercentages.length;
+    return {
+        ...prev,
+        boxFillPercentages: newBoxFillPercentages,
+        currentBoxIndex: newCurrentBoxIndex,
+        isComplete: newIsComplete,
+    };
+    });
+    // generate new set of numbers if not complete
+    setTimeout(() => {
+    generateNumbers();
+    }, 300);
+};
+
+// If all boxes are full, show end screen
+if (isComplete) {
     return (
     <div className={styles.congratsContainer}>
         <h1>Congratulations! Kier is reborn!</h1>
         <button
-        className={styles.restartButton}
         onClick={() => {
-            resetMdrProgress();
-            generateNewNumbers();
+            resetMdrData();
+            generateNumbers();
         }}
         >
         Restart
@@ -95,20 +118,23 @@ if (mdrProgress.isComplete) {
 }
 
 return (
-    <div className={styles.mdrContainer}>
-    <h1 className={styles.title}>Macrodata Refinement</h1>
-    <div className={styles.mainContent}>
-        <NumberGrid
-        numbers={numbers}
-        scaryIndices={scaryIndices}
-        selectedIndices={selectedIndices}
-        onNumberClick={handleNumberClick}
-        />
-        <BoxesContainer
-        onPlaceNumbers={handlePlaceNumbers}
-        />
+    <div className={styles.mdrPage}>
+    <div className={styles.topBar}>
+        <span className={styles.handle}>@andrewchilicki</span>
+        <div className={styles.lumonLogo}>LUMON</div>
     </div>
-    {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+
+    <MdrGrid
+        numbers={numbers}
+        rowCount={rowCount}
+        colCount={colCount}
+        clickedIndices={clickedIndices}
+        scaryIndices={scaryIndices}
+        onNumberClick={handleNumberClick}
+        flyAnimationTriggered={flyAnimationTriggered}
+    />
+
+    <MdrBoxes />
     </div>
 );
 };
