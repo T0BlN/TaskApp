@@ -1,142 +1,196 @@
-// pages/MdrPage.tsx
 import React, { useContext, useEffect, useState } from 'react';
 import { TaskContext } from '../../Context/TaskContext';
 import MdrGrid from '../../Components/MDR/MdrGrid';
 import MdrBoxes from '../../Components/MDR/MdrBoxes';
-import styles from './MdrPage.module.css'
+import styles from './MdrPage.module.css';
 
 const MdrPage: React.FC = () => {
-const { mdrData, setMdrData, resetMdrData } = useContext(TaskContext)!;
-const { boxFillPercentages, currentBoxIndex, isComplete } = mdrData;
+    const { mdrData, setMdrData, resetMdrData } = useContext(TaskContext)!;
+    const { boxFillPercentages, isComplete } = mdrData;
 
-// We'll generate a grid of (rowCount * colCount) random numbers
-const rowCount = 10;
-const colCount = 20;
-const totalCount = rowCount * colCount;
+    const rowCount = 25;
+    const colCount = 35;
+    const totalCount = rowCount * colCount;
 
-// Store the random numbers in a single array
-const [numbers, setNumbers] = useState<number[]>([]);
-// Track which indices are “scary”
-const [scaryIndices, setScaryIndices] = useState<number[]>([]);
-// Track which indices have been “clicked” (selected)
-const [clickedIndices, setClickedIndices] = useState<Set<number>>(new Set());
+    const [numbers, setNumbers] = useState<number[]>([]);
+    const [scaryIndices, setScaryIndices] = useState<number[]>([]);
+    const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
 
-// For the “fly into box” animation
-const [flyAnimationTriggered, setFlyAnimationTriggered] = useState<boolean>(false);
+    const [chosenBoxIndex, setChosenBoxIndex] = useState<number | null>(null);
+    const [boxOpen, setBoxOpen] = useState(false);
+    const [boxClosing, setBoxClosing] = useState(false);
 
-// Generate new random numbers + new “scary group”
-const generateNumbers = () => {
-    const newNums: number[] = [];
-    for (let i = 0; i < totalCount; i++) {
-    newNums.push(Math.floor(Math.random() * 9999)); 
+    const [numbersDisappearing, setNumbersDisappearing] = useState(false);
+
+    useEffect(() => {
+        generateNumbers();
+    }, []);
+
+    function generateNumbers() {
+        const newNums: number[] = [];
+        for (let i = 0; i < totalCount; i++) {
+        newNums.push(Math.floor(Math.random() * 10));
+        }
+        setNumbers(newNums);
+
+        const cluster = createRandomScaryCluster(rowCount, colCount);
+        setScaryIndices(cluster);
+
+        setSelectedIndices(new Set());
+        setNumbersDisappearing(false);
+        setBoxOpen(false);
+        setBoxClosing(false);
+        setChosenBoxIndex(null);
     }
-    setNumbers(newNums);
 
-    // pick a random contiguous set of ~5-10 numbers for “scary group”
-    const groupStart = Math.floor(Math.random() * (totalCount - 10));
-    const groupSize = 5 + Math.floor(Math.random() * 5);
-    const newScaryIndices: number[] = [];
-    for (let i = 0; i < groupSize; i++) {
-    newScaryIndices.push(groupStart + i);
+    const allScarySelected =
+        scaryIndices.length > 0 &&
+        scaryIndices.every((idx) => selectedIndices.has(idx));
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+        if ((e.key === 'b' || e.key === 'B') && allScarySelected && !boxOpen && !isComplete) {
+            openRandomBox();
+        } else if (e.key === 'Enter' && boxOpen && !boxClosing && !numbersDisappearing) {
+            depositScaryNumbers();
+        }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [allScarySelected, boxOpen, boxClosing, numbersDisappearing, isComplete]);
+
+    function openRandomBox() {
+        const notFull = boxFillPercentages
+        .map((val, idx) => ({ val, idx }))
+        .filter((b) => b.val < 100);
+        if (!notFull.length) return;
+
+        const r = Math.floor(Math.random() * notFull.length);
+        setChosenBoxIndex(notFull[r].idx);
+        setBoxOpen(true);
+        setBoxClosing(false);
     }
-    setScaryIndices(newScaryIndices);
-    setClickedIndices(new Set());
-    setFlyAnimationTriggered(false);
-};
 
-// On mount, generate the initial set
-useEffect(() => {
-    generateNumbers();
-}, []);
+    function depositScaryNumbers() {
+        setNumbersDisappearing(true);
 
-// When the user clicks a number
-const handleNumberClick = (index: number) => {
-    // Add index to clickedIndices
-    setClickedIndices((prev) => {
-    const newSet = new Set(prev);
-    newSet.add(index);
-    return newSet;
-    });
-};
+        setTimeout(() => {
+        setBoxClosing(true);
 
-// Whenever “clickedIndices” changes, check if user has found all scary numbers
-useEffect(() => {
-    if (scaryIndices.length > 0 && scaryIndices.every((i) => clickedIndices.has(i))) {
-    // Trigger “fly into box” animation
-    setFlyAnimationTriggered(true);
-    // Wait for the animation to finish, then update the box fill
-    const timer = setTimeout(() => {
-        depositInBox();
-    }, 1500); // match your fly animation duration
-    return () => clearTimeout(timer);
+        setTimeout(() => {
+            fillBoxAndRefresh();
+        }, 1500);
+        }, 1500);
     }
-}, [clickedIndices, scaryIndices]);
 
-// Increase the fill percentage of the current box and see if we are done
-const depositInBox = () => {
-    const increment = Math.floor(Math.random() * 21) + 10; // 10–30%
-    setMdrData((prev) => {
-    const newBoxFillPercentages = [...prev.boxFillPercentages];
-    if (newBoxFillPercentages[prev.currentBoxIndex] < 100) {
-        newBoxFillPercentages[prev.currentBoxIndex] =
-        Math.min(newBoxFillPercentages[prev.currentBoxIndex] + increment, 100);
-    }
-    // Move on to next box
-    let newCurrentBoxIndex = prev.currentBoxIndex;
-    if (newBoxFillPercentages[prev.currentBoxIndex] >= 100) {
-        newCurrentBoxIndex += 1;
-    }
-    const newIsComplete = newCurrentBoxIndex >= newBoxFillPercentages.length;
-    return {
-        ...prev,
-        boxFillPercentages: newBoxFillPercentages,
-        currentBoxIndex: newCurrentBoxIndex,
-        isComplete: newIsComplete,
-    };
-    });
-    // generate new set of numbers if not complete
-    setTimeout(() => {
-    generateNumbers();
-    }, 300);
-};
+    function fillBoxAndRefresh() {
+        if (chosenBoxIndex !== null) {
+        const inc = Math.floor(Math.random() * 21) + 10;
+        setMdrData((prev) => {
+            const newFills = [...prev.boxFillPercentages];
+            if (newFills[chosenBoxIndex] < 100) {
+            newFills[chosenBoxIndex] = Math.min(newFills[chosenBoxIndex] + inc, 100);
+            }
+            const done = newFills.every((x) => x >= 100);
+            return { ...prev, boxFillPercentages: newFills, isComplete: done };
+        });
+        }
+        setBoxOpen(false);
+        setBoxClosing(false);
+        setChosenBoxIndex(null);
+        setNumbersDisappearing(false);
 
-// If all boxes are full, show end screen
-if (isComplete) {
+        if (!isComplete) {
+        generateNumbers();
+        }
+    }
+
+    if (isComplete) {
+        return (
+        <div className={styles.congratsContainer}>
+            <h1>Congratulations! Kier is reborn!</h1>
+            <button
+            onClick={() => {
+                resetMdrData();
+                generateNumbers();
+            }}
+            >
+            Restart
+            </button>
+        </div>
+        );
+    }
+
     return (
-    <div className={styles.congratsContainer}>
-        <h1>Congratulations! Kier is reborn!</h1>
-        <button
-        onClick={() => {
-            resetMdrData();
-            generateNumbers();
-        }}
-        >
-        Restart
-        </button>
-    </div>
+        <div className={styles.pageContainer}>
+        <div className={styles.topBar}>
+            <div className={styles.handle}>Cold Harbor</div>
+            <div className={styles.lumonLogo}>LUMON</div>
+        </div>
+
+        <div className={styles.gridSection}>
+            <MdrGrid
+            numbers={numbers}
+            rowCount={rowCount}
+            colCount={colCount}
+            scaryIndices={scaryIndices}
+            selectedIndices={selectedIndices}
+            setSelectedIndices={setSelectedIndices}
+            numbersDisappearing={numbersDisappearing}
+            />
+        </div>
+
+        <div className={styles.boxesSection}>
+            <MdrBoxes
+            chosenBoxIndex={chosenBoxIndex}
+            boxOpen={boxOpen}
+            boxClosing={boxClosing}
+            />
+        </div>
+        </div>
     );
-}
-
-return (
-    <div className={styles.mdrPage}>
-    <div className={styles.topBar}>
-        <span className={styles.handle}>@andrewchilicki</span>
-        <div className={styles.lumonLogo}>LUMON</div>
-    </div>
-
-    <MdrGrid
-        numbers={numbers}
-        rowCount={rowCount}
-        colCount={colCount}
-        clickedIndices={clickedIndices}
-        scaryIndices={scaryIndices}
-        onNumberClick={handleNumberClick}
-        flyAnimationTriggered={flyAnimationTriggered}
-    />
-
-    <MdrBoxes />
-    </div>
-);
 };
 
 export default MdrPage;
+
+function createRandomScaryCluster(rowCount: number, colCount: number): number[] {
+    const maxWidth = 3;
+    const maxHeight = 3;
+    const width = Math.floor(Math.random() * maxWidth) + 1;
+    const height = Math.floor(Math.random() * maxHeight) + 1;
+    let totalCells = width * height;
+
+    if (totalCells < 5) {
+        return createRandomScaryCluster(rowCount, colCount);
+    }
+
+    const keepMap: boolean[] = Array(totalCells).fill(true);
+    while (totalCells > 9) {
+        const idx = Math.floor(Math.random() * keepMap.length);
+        if (keepMap[idx]) {
+        keepMap[idx] = false;
+        totalCells--;
+        }
+    }
+
+    const maxRowStart = rowCount - height;
+    const maxColStart = colCount - width;
+    if (maxRowStart < 0 || maxColStart < 0) return [];
+
+    const rowStart = Math.floor(Math.random() * (maxRowStart + 1));
+    const colStart = Math.floor(Math.random() * (maxColStart + 1));
+
+    const scary: number[] = [];
+    let subIndex = 0;
+    for (let r = 0; r < height; r++) {
+        for (let c = 0; c < width; c++) {
+        if (keepMap[subIndex]) {
+            scary.push((rowStart + r) * colCount + (colStart + c));
+        }
+        subIndex++;
+        }
+    }
+    return scary;
+}

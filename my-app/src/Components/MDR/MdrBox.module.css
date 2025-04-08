@@ -1,38 +1,104 @@
-/* MdrBox.module.css */
-.box {
+.boxContainer {
+    position: relative;
     width: 80px;
-    height: 80px;
+    height: 70px; 
+    margin: 4px;
+}
+
+.barWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 10px;
+    overflow: hidden;
+}
+
+.barHalfLeft,
+.barHalfRight {
+    position: absolute;
+    top: 0;
+    width: 40px;
+    height: 10px;
+    background-color: #00ffff;
+    transition: left 1.5s ease;
+}
+
+.barHalfLeft {
+    left: 0;
+}
+.barHalfRight {
+    left: 40px;
+}
+
+.barHalfLeftOpen {
+    left: -30px !important;
+}
+.barHalfRightOpen {
+    left: 70px !important;
+}
+
+.barHalfLeftClose {
+    left: 0 !important;
+}
+.barHalfRightClose {
+    left: 40px !important;
+}
+
+.box {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 80px;
+    height: 60px;
     border: 1px solid #00ffff;
+    background-color: #000;
     color: #00ffff;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    font-family: 'Courier New', monospace;
-    position: relative;
+    box-sizing: border-box;
 }
 
 .label {
-    position: absolute;
-    top: 5px;
-    left: 5px;
+    margin-top: 2px;
     font-size: 0.9rem;
 }
 
-.fillBar {
-    width: 60px;
-    height: 10px;
-    background-color: #333;
-    border: 1px solid #00ffff;
+.progressWrapper {
+    margin-top: auto; 
+    width: 100%;
+    text-align: center;
+    padding-bottom: 4px;
 }
 
-.fill {
+.progressBar {
+    width: 60px;
+    height: 8px;
+    background-color: #333;
+    border: 1px solid #00ffff;
+    margin: 0 auto 2px;
+    position: relative;
+}
+
+.progressFill {
     height: 100%;
     background-color: #00ffff;
     transition: width 0.4s ease;
 }
 
-.fillPercent {
-    margin-top: 4px;
-    font-size: 0.8rem;
+.progressPercent {
+    font-size: 0.7rem;
+}
+
+.chosenOverlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff0;
+    font-weight: bold;
+    pointer-events: none;
 }

@@ -1,136 +1,241 @@
-// components/MdrGrid.tsx
 import React, { useRef, useState, useEffect } from 'react';
 import styles from './MdrGrid.module.css';
 
 interface MdrGridProps {
-numbers: number[];
-rowCount: number;
-colCount: number;
-clickedIndices: Set<number>;
-scaryIndices: number[];
-onNumberClick: (index: number) => void;
-flyAnimationTriggered: boolean;
+    numbers: number[];
+    rowCount: number;
+    colCount: number;
+    scaryIndices: number[];
+    selectedIndices: Set<number>;
+    setSelectedIndices: React.Dispatch<React.SetStateAction<Set<number>>>;
+    numbersDisappearing: boolean;
+}
+
+const baseCellSize = 80;
+const cellMargin = 1;
+const MIN_ZOOM = 0.8;
+const MAX_ZOOM = 2.0;
+
+interface WiggleParam {
+    duration: string;
+    delay: string;
 }
 
 const MdrGrid: React.FC<MdrGridProps> = ({
-numbers,
-rowCount,
-colCount,
-clickedIndices,
-scaryIndices,
-onNumberClick,
-flyAnimationTriggered,
+    numbers,
+    rowCount,
+    colCount,
+    scaryIndices,
+    selectedIndices,
+    setSelectedIndices,
+    numbersDisappearing,
 }) => {
-const containerRef = useRef<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
-// For click-drag panning
-const [isDragging, setIsDragging] = useState(false);
-const [dragStart, setDragStart] = useState<{x: number, y: number}>({x: 0, y: 0});
-const [scrollStart, setScrollStart] = useState<{x: number, y: number}>({x: 0, y: 0});
+    const [wiggleParams, setWiggleParams] = useState<WiggleParam[]>([]);
+    const [isSelecting, setIsSelecting] = useState(false);
+    const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
 
-// For hover-enlarge effect
-const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: -9999, y: -9999 });
+    const [zoomLevel, setZoomLevel] = useState(MIN_ZOOM);
+    const [disableHover, setDisableHover] = useState(false);
 
-useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    useEffect(() => {
+        const totalCount = numbers.length;
+        const newParams: WiggleParam[] = [];
+        for (let i = 0; i < totalCount; i++) {
+        newParams.push({
+            duration: (1.5 + Math.random() * 1.5).toFixed(2) + 's',
+            delay: (Math.random() * 2).toFixed(2) + 's',
+        });
+        }
+        setWiggleParams(newParams);
+    }, [numbers]);
 
-    const handleMouseDown = (e: MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
-    setScrollStart({ x: container.scrollLeft, y: container.scrollTop });
-    };
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === '+' || e.key === '=') {
+            zoomAtCursor(0.2);
+        } else if (e.key === '-') {
+            zoomAtCursor(-0.2);
+        }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [zoomLevel, mousePos]);
 
-    const handleMouseMove = (e: MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
+    function zoomAtCursor(delta: number) {
+        const oldZoom = zoomLevel;
+        let newZoom = oldZoom + delta;
+        if (newZoom < MIN_ZOOM) newZoom = MIN_ZOOM;
+        if (newZoom > MAX_ZOOM) newZoom = MAX_ZOOM;
+        if (newZoom === oldZoom) return;
 
-    if (!isDragging) return;
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
-    container.scrollLeft = scrollStart.x - dx;
-    container.scrollTop = scrollStart.y - dy;
-    };
+        setDisableHover(true);
 
-    const handleMouseUp = () => {
-    setIsDragging(false);
-    };
+        const container = containerRef.current;
+        if (!container) {
+        setZoomLevel(newZoom);
+        requestAnimationFrame(() => setDisableHover(false));
+        return;
+        }
+        const rect = container.getBoundingClientRect();
 
-    container.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+        const oldBlock = (baseCellSize + cellMargin) * oldZoom;
+        const oldW = colCount * oldBlock;
+        const oldH = rowCount * oldBlock;
 
-    return () => {
-    container.removeEventListener('mousedown', handleMouseDown);
-    window.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('mouseup', handleMouseUp);
-    };
-}, [isDragging, dragStart, scrollStart]);
+        const mx = mousePos.x - rect.left + container.scrollLeft;
+        const my = mousePos.y - rect.top + container.scrollTop;
+        const propX = mx / oldW;
+        const propY = my / oldH;
 
-// Render each number
-const gridItems = numbers.map((num, index) => {
-    const row = Math.floor(index / colCount);
-    const col = index % colCount;
+        setZoomLevel(newZoom);
 
-    // A unique random animation duration + delay for wiggle
-    const duration = (1.5 + Math.random() * 1.5).toFixed(2) + 's';
-    const delay = (Math.random() * 2).toFixed(2) + 's';
+        requestAnimationFrame(() => {
+            const newBlock = (baseCellSize + cellMargin) * newZoom;
+            const newW = colCount * newBlock;
+            const newH = rowCount * newBlock;
 
-    // Distance-based scaling
-    // We find the center of this cell in the container, then compute distance from mouse
-    const cellSize = 48; // consistent with CSS .cell width/height
-    const cellX = col * cellSize + cellSize / 2;
-    const cellY = row * cellSize + cellSize / 2;
+            const screenX = mousePos.x - rect.left;
+            const screenY = mousePos.y - rect.top;
 
-    let scale = 1;
-    // We'll check bounding rect to get container offset
-    if (containerRef.current) {
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = cellX - containerRef.current.scrollLeft + rect.left;
-    const centerY = cellY - containerRef.current.scrollTop + rect.top;
-    const dist = Math.hypot(mousePos.x - centerX, mousePos.y - centerY);
-    const maxDist = 100; // radius for the enlarge effect
-    if (dist < maxDist) {
-        scale = 1.0 + (0.8 * (1 - dist / maxDist)); 
+            const newScrollLeft = propX * newW - screenX;
+            const newScrollTop = propY * newH - screenY;
+
+            container.scrollLeft = Math.max(0, Math.min(newScrollLeft, newW - container.clientWidth));
+            container.scrollTop = Math.max(0, Math.min(newScrollTop, newH - container.clientHeight));
+
+            requestAnimationFrame(() => setDisableHover(false));
+        });
     }
+
+    const handleContainerMouseDown = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setIsSelecting(true);
+    };
+    const handleContainerMouseUp = () => {
+        setIsSelecting(false);
+    };
+
+    const cellBlockSize = (baseCellSize + cellMargin) * zoomLevel;
+    const contentSize = baseCellSize * zoomLevel;
+
+    function selectScary(index: number) {
+        if (!scaryIndices.includes(index)) return;
+        setSelectedIndices((prev) => {
+        if (prev.has(index)) return prev;
+        return new Set([...prev, index]);
+        });
     }
 
-    // If this index is in the “scary” group and fly animation is triggered, add a special class
-    let flyClass = '';
-    if (flyAnimationTriggered && scaryIndices.includes(index)) {
-    flyClass = styles.flyDown;
-    }
+    const cellElements = numbers.map((digit, i) => {
+        const row = Math.floor(i / colCount);
+        const col = i % colCount;
+        const isScary = scaryIndices.includes(i);
+        const isSelected = selectedIndices.has(i);
+
+        const leftPx = col * cellBlockSize;
+        const topPx = row * cellBlockSize;
+
+        let hoverScale = 1;
+        if (!disableHover && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const cx = leftPx + contentSize / 2 - containerRef.current.scrollLeft + rect.left;
+            const cy = topPx + contentSize / 2 - containerRef.current.scrollTop + rect.top;
+            const dist = Math.hypot(mousePos.x - cx, mousePos.y - cy);
+
+            const maxDist = 120;
+            if (dist < maxDist) {
+                hoverScale = 1 + 1.5 * (1 - dist / maxDist);
+            }
+        }
+
+        const wiggleClass = isScary ? styles.scaryWiggle : styles.wiggleWrapper;
+
+        let finalScale = hoverScale;
+        if (isScary && isSelected) {
+            finalScale = Math.max(finalScale, 1.5);
+        }
+
+        let flyClass = '';
+        if (numbersDisappearing && isScary && isSelected) {
+            flyClass = styles.flyAway;
+        }
+
+        const { duration, delay } = wiggleParams[i] || { duration: '2s', delay: '0s' };
+
+        const onCellMouseDown = () => {
+            if (isScary) selectScary(i);
+        };
+        const onCellMouseOver = () => {
+            if (isSelecting && isScary) selectScary(i);
+        };
+
+        const fontSize = 0.3 * contentSize;
+
+        return (
+        <div
+            key={i}
+            className={`${styles.cell} ${flyClass}`}
+            style={{
+            top: topPx,
+            left: leftPx,
+            width: contentSize,
+            height: contentSize,
+            }}
+            onMouseDown={onCellMouseDown}
+            onMouseOver={onCellMouseOver}
+        >
+            <div
+            className={wiggleClass}
+            style={{
+                animationDuration: duration,
+                animationDelay: delay,
+            }}
+            >
+            <div
+                className={styles.scaleWrapper}
+                style={{
+                transform: `scale(${finalScale})`,
+                fontWeight: isScary && isSelected ? 'bold' : 'normal',
+                fontSize,
+                lineHeight: '1',
+                }}
+            >
+                {digit}
+            </div>
+            </div>
+        </div>
+        );
+    });
+
+    const totalWidth = colCount * cellBlockSize;
+    const totalHeight = rowCount * cellBlockSize;
 
     return (
-    <div
-        key={index}
-        className={`${styles.cell} ${flyClass}`}
-        style={{
-        top: row * cellSize,
-        left: col * cellSize,
-        animationDuration: duration,
-        animationDelay: delay,
-        transform: `scale(${scale})`,
+        <div
+        ref={containerRef}
+        className={styles.container}
+        onMouseDown={handleContainerMouseDown}
+        onMouseUp={handleContainerMouseUp}
+        onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+        onMouseLeave={() => {
+            setMousePos({ x: -9999, y: -9999 });
+            setIsSelecting(false);
         }}
-        onClick={() => onNumberClick(index)}
-    >
-        {num}
-    </div>
+        >
+        <div
+            className={styles.grid}
+            style={{
+            position: 'relative',
+            width: totalWidth,
+            height: totalHeight,
+            }}
+        >
+            {cellElements}
+        </div>
+        </div>
     );
-});
-
-return (
-    <div className={styles.container} ref={containerRef}>
-    <div
-        className={styles.grid}
-        style={{
-        width: colCount * 48,
-        height: rowCount * 48,
-        }}
-    >
-        {gridItems}
-    </div>
-    </div>
-);
 };
 
 export default MdrGrid;
