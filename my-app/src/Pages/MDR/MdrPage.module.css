@@ -1,0 +1,81 @@
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    color: #00ffff;
+    font-family: 'Courier New', monospace;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid #00ffff;
+}
+
+.backArrow {
+    font-size: 1.2rem;
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    margin-right: 1rem;
+    user-select: none;
+}
+
+.backArrow:hover {
+    opacity: 0.8;
+}
+
+.handle {
+    font-size: 1rem;
+}
+
+.progressLabel {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.lumonLogo {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.gridSection {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.boxesSection {
+    flex-shrink: 0;
+    background-color: #000;
+    border-top: 2px solid #00ffff;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.congratsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+}
+
+.congratsContainer button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #00cccc;
+    border: none;
+    color: #000;
+    font-weight: bold;
+}

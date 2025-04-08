@@ -14,6 +14,12 @@ export interface Task {
     priority: 'l' | 'm' | 'h';
 }
 
+export interface MdrData {
+    boxFillPercentages: number[];
+    currentBoxIndex: number;
+    isComplete: boolean;
+}
+
 interface TaskContextValue {
     todoTasks: Task[];
     inProgressTasks: Task[];
@@ -42,6 +48,11 @@ interface TaskContextValue {
 
     //update
     updateTask: (task: Task) => void;
+
+    //MDR stuff
+    mdrData: MdrData;
+    setMdrData: React.Dispatch<React.SetStateAction<MdrData>>;
+    resetMdrData: () => void;
 }
 
 export const TaskContext = createContext<TaskContextValue | undefined>(
@@ -69,6 +80,17 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         const saved = localStorage.getItem('trashedTasks');
         return saved ? JSON.parse(saved) : [];
     });
+    const [mdrData, setMdrData] = useState<MdrData>(() => {
+        const saved = localStorage.getItem('mdrData');
+        if (saved) {
+        return JSON.parse(saved);
+        }
+        return {
+        boxFillPercentages: [0, 0, 0, 0, 0],
+        currentBoxIndex: 0,
+        isComplete: false,
+        };
+    });
 
     useEffect(() => {
         localStorage.setItem('todoTasks', JSON.stringify(todoTasks));
@@ -82,6 +104,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('trashedTasks', JSON.stringify(trashedTasks));
     }, [trashedTasks]);
+    useEffect(() => {
+        localStorage.setItem('mdrData', JSON.stringify(mdrData));
+    }, [mdrData]);
 
     // Basic "add" appends to end of list (used by "plus" button)
     const addTodoTask = useCallback((task: Omit<Task, 'id'>) => {
@@ -218,6 +243,14 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         );
     }
 
+    const resetMdrData = useCallback(() => {
+        setMdrData({
+        boxFillPercentages: [0, 0, 0, 0, 0],
+        currentBoxIndex: 0,
+        isComplete: false,
+        });
+    }, []);
+
     const contextValue: TaskContextValue = {
         todoTasks,
         inProgressTasks,
@@ -239,6 +272,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         insertInProgressTask,
         insertCompletedTask,
         updateTask,
+        mdrData,
+        setMdrData,
+        resetMdrData,
     };
 
     return (

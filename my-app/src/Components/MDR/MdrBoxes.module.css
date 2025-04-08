@@ -1,0 +1,10 @@
+.boxesRow {
+    display: flex;
+    justify-content: space-evenly; 
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    background-color: #000;
+    border-top: 2px solid #00ffff;
+}

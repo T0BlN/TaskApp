@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import { TaskContext, Task } from '../../Context/TaskContext';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
@@ -10,8 +9,11 @@ import {
   DropResult
 } from '@hello-pangea/dnd';
 
+import { TaskContext, Task } from '../../Context/TaskContext';
+
 import AddTaskModal from '../../Components/AddTaskModal/AddTaskModal';
 import TaskInfoModal from '../../Components/TaskInfoModal/TaskInfoModal';
+
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -47,98 +49,79 @@ const Home: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Called when user submits modal form for "To Do"
   const handleAddTodoTask = (taskData: { name: string; description: string; priority: 'l' | 'm' | 'h' }) => {
     addTodoTask(taskData);
   };
 
-  // Open the info modal
   const handleShowInfo = (task: Task) => {
     setSelectedTask(task);
     setInfoModalVisible(true);
   };
-
-  // When user saves changes in TaskInfoModal
   const handleSaveInfo = (updated: Task) => {
     updateTask(updated);
     setInfoModalVisible(false);
     setSelectedTask(null);
   };
-
-  // Close info modal
   const handleCloseInfoModal = () => {
     setInfoModalVisible(false);
     setSelectedTask(null);
   };
 
-  // trash button navigation
   const handleGoToTrash = () => {
     navigate('/trash');
   };
 
-  // Handle final drag event
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (!destination) return;
     if (source.droppableId === destination.droppableId && source.index === destination.index) {
-      return; // dropped in same spot
-    }
-
-    // Reorder within the SAME column
-    if (source.droppableId === destination.droppableId) {
-      if (source.droppableId === 'todo') {
-        reorderTodoTasks(source.index, destination.index);
-      } else if (source.droppableId === 'inProgress') {
-        reorderInProgressTasks(source.index, destination.index);
-      } else if (source.droppableId === 'completed') {
-        reorderCompletedTasks(source.index, destination.index);
-      }
       return;
     }
 
-    // Different column => remove & insert
+    if (source.droppableId === destination.droppableId) {
+      if (source.droppableId === 'todo') reorderTodoTasks(source.index, destination.index);
+      if (source.droppableId === 'inProgress') reorderInProgressTasks(source.index, destination.index);
+      if (source.droppableId === 'completed') reorderCompletedTasks(source.index, destination.index);
+      return;
+    }
+
     let draggedTask: Task | undefined;
     if (source.droppableId === 'todo') {
       draggedTask = todoTasks.find((t) => t.id === draggableId);
+      if (draggedTask) removeTodoTask(draggedTask.id);
     } else if (source.droppableId === 'inProgress') {
       draggedTask = inProgressTasks.find((t) => t.id === draggableId);
+      if (draggedTask) removeInProgressTask(draggedTask.id);
     } else if (source.droppableId === 'completed') {
       draggedTask = completedTasks.find((t) => t.id === draggableId);
+      if (draggedTask) removeCompletedTask(draggedTask.id);
     }
     if (!draggedTask) return;
 
-    // Remove from old list
-    if (source.droppableId === 'todo') removeTodoTask(draggedTask.id);
-    if (source.droppableId === 'inProgress') removeInProgressTask(draggedTask.id);
-    if (source.droppableId === 'completed') removeCompletedTask(draggedTask.id);
-
-    // Insert into new list
     if (destination.droppableId === 'todo') {
-      insertTodoTask({
-        id: draggedTask.id,
-        name: draggedTask.name,
-        description: draggedTask.description,
-        priority: draggedTask.priority
-      }, destination.index);
+      insertTodoTask({ ...draggedTask }, destination.index);
     } else if (destination.droppableId === 'inProgress') {
-      insertInProgressTask({
-        id: draggedTask.id,
-        name: draggedTask.name,
-        description: draggedTask.description,
-        priority: draggedTask.priority
-      }, destination.index);
+      insertInProgressTask({ ...draggedTask }, destination.index);
     } else if (destination.droppableId === 'completed') {
-      insertCompletedTask({
-        id: draggedTask.id,
-        name: draggedTask.name,
-        description: draggedTask.description,
-        priority: draggedTask.priority
-      }, destination.index);
+      insertCompletedTask({ ...draggedTask }, destination.index);
     }
+  };
+
+  const [mysteriousNum] = useState(() => Math.floor(Math.random() * 10));
+  const handleClickMysterious = () => {
+    navigate('/mdr');
   };
 
   return (
     <>
+      <div
+        className="mysterious-number"
+        title="This looks important and mysterious"
+        onClick={handleClickMysterious}
+      >
+        {mysteriousNum}
+      </div>
+
       <button className="fixed-trash-icon" onClick={handleGoToTrash}>
         <DeleteIcon fontSize="inherit" />
       </button>
@@ -146,7 +129,7 @@ const Home: React.FC = () => {
 
       <div className="home-container">
         <DragDropContext onDragEnd={handleDragEnd}>
-          {/* TO DO COLUMN */}
+          {/* TO DO Column */}
           <Droppable droppableId="todo">
             {(provided, snapshot) => (
               <div className="column">
@@ -170,17 +153,30 @@ const Home: React.FC = () => {
                           style={{ ...provided.draggableProps.style }}
                           onDoubleClick={() => handleShowInfo(task)}
                         >
-                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
-                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
+                          <div
+                            className={`priority-dot ${
+                              task.priority === 'l'
+                                ? 'low'
+                                : task.priority === 'm'
+                                ? 'medium'
+                                : 'high'
+                            }`}
+                          ></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
                           </div>
                           <div className="task-buttons">
-                            <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              <InfoIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="info-button"
+                              onClick={() => handleShowInfo(task)}
+                            >
+                              <InfoIcon style={{ fontSize: '1.2rem' }} />
                             </button>
-                            <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="task-trash-button"
+                              onClick={() => trashTask(task)}
+                            >
+                              <DeleteIcon style={{ fontSize: '1.2rem' }} />
                             </button>
                           </div>
                         </div>
@@ -193,7 +189,7 @@ const Home: React.FC = () => {
             )}
           </Droppable>
 
-          {/* IN PROGRESS COLUMN */}
+          {/* IN PROGRESS Column */}
           <Droppable droppableId="inProgress">
             {(provided, snapshot) => (
               <div className="column">
@@ -216,17 +212,30 @@ const Home: React.FC = () => {
                           onDoubleClick={() => handleShowInfo(task)}
                           style={{ ...provided.draggableProps.style }}
                         >
-                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
-                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
+                          <div
+                            className={`priority-dot ${
+                              task.priority === 'l'
+                                ? 'low'
+                                : task.priority === 'm'
+                                ? 'medium'
+                                : 'high'
+                            }`}
+                          ></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
                           </div>
                           <div className="task-buttons">
-                            <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              <InfoIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="info-button"
+                              onClick={() => handleShowInfo(task)}
+                            >
+                              <InfoIcon style={{ fontSize: '1.2rem' }} />
                             </button>
-                            <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="task-trash-button"
+                              onClick={() => trashTask(task)}
+                            >
+                              <DeleteIcon style={{ fontSize: '1.2rem' }} />
                             </button>
                           </div>
                         </div>
@@ -239,7 +248,7 @@ const Home: React.FC = () => {
             )}
           </Droppable>
 
-          {/* COMPLETED COLUMN */}
+          {/* COMPLETED Column */}
           <Droppable droppableId="completed">
             {(provided, snapshot) => (
               <div className="column">
@@ -262,17 +271,30 @@ const Home: React.FC = () => {
                           style={{ ...provided.draggableProps.style }}
                           onDoubleClick={() => handleShowInfo(task)}
                         >
-                          <div className={`priority-dot ${ task.priority === 'l' ? 'low' : 
-                          task.priority === 'm' ? 'medium' : 'high'}`}></div>
+                          <div
+                            className={`priority-dot ${
+                              task.priority === 'l'
+                                ? 'low'
+                                : task.priority === 'm'
+                                ? 'medium'
+                                : 'high'
+                            }`}
+                          ></div>
                           <div className="task-content">
                             <div className="task-name">{task.name}</div>
                           </div>
                           <div className="task-buttons">
-                            <button className="info-button" onClick={() => handleShowInfo(task)}>
-                              <InfoIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="info-button"
+                              onClick={() => handleShowInfo(task)}
+                            >
+                              <InfoIcon style={{ fontSize: '1.2rem' }} />
                             </button>
-                            <button className="task-trash-button" onClick={() => trashTask(task)}>
-                              <DeleteIcon style={{fontSize: '1.2rem' }}/>
+                            <button
+                              className="task-trash-button"
+                              onClick={() => trashTask(task)}
+                            >
+                              <DeleteIcon style={{ fontSize: '1.2rem' }} />
                             </button>
                           </div>
                         </div>
