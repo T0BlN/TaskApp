@@ -146,7 +146,7 @@ const MdrGrid: React.FC<MdrGridProps> = ({
 
             const maxDist = 120;
             if (dist < maxDist) {
-                hoverScale = 1 + 1.5 * (1 - dist / maxDist);
+                hoverScale = 1 + 1.6 * (1 - dist / maxDist);
             }
         }
 

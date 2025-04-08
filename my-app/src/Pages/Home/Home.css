@@ -204,3 +204,25 @@
     color: rgb(255, 233, 137);
     transform: scale(1.1);
 }
+
+.mysterious-number {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 999;
+    font-size: 2rem;
+    color: #00ffff;
+    cursor: pointer;
+    user-select: none;
+  
+    animation: mysteriousWiggle 2s infinite ease-in-out;
+}
+
+@keyframes mysteriousWiggle {
+    0%   { transform: translate(0, 0); }
+    20%  { transform: translate(-1px, 1px); }
+    40%  { transform: translate(1px, -1px); }
+    60%  { transform: translate(-1px, 0); }
+    80%  { transform: translate(1px, 1px); }
+    100% { transform: translate(0, 0); }
+}

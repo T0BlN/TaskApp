@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TaskContext } from '../../Context/TaskContext';
 import MdrGrid from '../../Components/MDR/MdrGrid';
 import MdrBoxes from '../../Components/MDR/MdrBoxes';
@@ -21,6 +22,12 @@ const MdrPage: React.FC = () => {
     const [boxClosing, setBoxClosing] = useState(false);
 
     const [numbersDisappearing, setNumbersDisappearing] = useState(false);
+
+    const navigate = useNavigate();
+
+    const handleGoHome = () => {
+        navigate('/');
+      };
 
     useEffect(() => {
         generateNumbers();
@@ -126,6 +133,9 @@ const MdrPage: React.FC = () => {
     return (
         <div className={styles.pageContainer}>
         <div className={styles.topBar}>
+            <button className={styles.backArrow} onClick={handleGoHome}>
+            &larr;
+            </button>
             <div className={styles.handle}>Cold Harbor</div>
             <div className={styles.lumonLogo}>LUMON</div>
         </div>

@@ -16,9 +16,22 @@
     border-bottom: 2px solid #00ffff;
 }
 
+.backArrow {
+    font-size: 1.2rem;
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    margin-right: 1rem;
+    user-select: none;
+}
+
+.backArrow:hover {
+    opacity: 0.8;
+}
+
 .handle {
     font-size: 1rem;
-    margin-left: 50px;
 }
 
 .progressLabel {
